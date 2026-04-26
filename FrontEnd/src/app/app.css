@@ -1,0 +1,37 @@
+
+:host {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr var(--right-sidebar-width);
+  grid-template-rows: 1fr;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+/* Main column = canvas + footer stacked */
+.app-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Canvas fills remaining vertical space above footer */
+app-canvas {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Footer sits at bottom of main column */
+app-footer-toolbar {
+  flex-shrink: 0;
+}

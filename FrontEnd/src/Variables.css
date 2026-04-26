@@ -7,42 +7,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 
 :root {
-  /* Core Palette */
-  --bg-base:        #0d0f14;
-  --bg-surface:     #13161e;
-  --bg-elevated:    #1a1e2a;
-  --bg-hover:       #1f2435;
-  --bg-active:      #252b3b;
+  /* Core Palette — Light Mode */
+  --bg-base:        #f0f2f8;
+  --bg-surface:     #ffffff;
+  --bg-elevated:    #f7f8fc;
+  --bg-hover:       #eef0f8;
+  --bg-active:      #e8eaf5;
 
   /* Accent Colors */
   --accent-primary:   #6c63ff;
-  --accent-secondary: #00d4aa;
-  --accent-warn:      #ff6b6b;
-  --accent-gold:      #f5c542;
+  --accent-secondary: #00b894;
+  --accent-warn:      #e55353;
+  --accent-gold:      #d4890a;
 
   /* Text */
-  --text-primary:   #e8eaf0;
-  --text-secondary: #8b92a8;
-  --text-muted:     #4a5068;
+  --text-primary:   #1a1d2e;
+  --text-secondary: #4a5068;
+  --text-muted:     #9aa0b8;
   --text-accent:    #6c63ff;
 
   /* Borders */
-  --border-subtle:  rgba(255,255,255,0.06);
-  --border-normal:  rgba(255,255,255,0.10);
-  --border-strong:  rgba(108,99,255,0.4);
+  --border-subtle:  rgba(0,0,0,0.07);
+  --border-normal:  rgba(0,0,0,0.12);
+  --border-strong:  rgba(108,99,255,0.35);
 
-  /* Node Colors */
-  --node-fill:      #1a1e2a;
+  /* Node Colors (canvas nodes stay dark per screenshot) */
+  --node-fill:      #1a1d2e;
   --node-stroke:    #6c63ff;
-  --node-text:      #e8eaf0;
+  --node-text:      #ffffff;
   --edge-color:     #6c63ff;
-  --edge-feedback:  #00d4aa;
+  --edge-feedback:  #00b894;
 
   /* Shadows */
-  --shadow-sm:  0 2px 8px rgba(0,0,0,0.4);
-  --shadow-md:  0 4px 20px rgba(0,0,0,0.5);
-  --shadow-lg:  0 8px 40px rgba(0,0,0,0.6);
-  --glow:       0 0 20px rgba(108,99,255,0.25);
+  --shadow-sm:  0 1px 4px rgba(0,0,0,0.08);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,0.13);
+  --glow:       0 0 16px rgba(108,99,255,0.18);
 
   /* Layout */
   --sidebar-width:     280px;
@@ -84,7 +84,7 @@ html, body {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-normal);
+  background: rgba(0,0,0,0.15);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
@@ -152,8 +152,8 @@ html, body {
   padding: 8px 14px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-normal);
-  background: var(--bg-elevated);
-  color: var(--text-primary);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 500;
@@ -178,37 +178,45 @@ html, body {
 }
 
 .btn--primary:hover {
-  background: #7c74ff;
-  border-color: #7c74ff;
+  background: #5a52e0;
+  border-color: #5a52e0;
   color: #fff;
-  box-shadow: 0 0 24px rgba(108,99,255,0.45);
+  box-shadow: 0 0 20px rgba(108,99,255,0.3);
 }
 
 .btn--secondary {
-  background: rgba(0,212,170,0.1);
-  border-color: rgba(0,212,170,0.3);
+  background: rgba(0,184,148,0.08);
+  border-color: rgba(0,184,148,0.25);
   color: var(--accent-secondary);
 }
 
 .btn--secondary:hover {
-  background: rgba(0,212,170,0.18);
+  background: rgba(0,184,148,0.14);
   border-color: var(--accent-secondary);
-  box-shadow: 0 0 16px rgba(0,212,170,0.2);
+  box-shadow: 0 0 12px rgba(0,184,148,0.15);
 }
 
 .btn--ghost {
   background: transparent;
   border-color: transparent;
+  color: var(--text-secondary);
+}
+
+.btn--ghost:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-normal);
+  color: var(--text-primary);
+  box-shadow: none;
 }
 
 .btn--danger {
-  background: rgba(255,107,107,0.1);
-  border-color: rgba(255,107,107,0.25);
+  background: rgba(229,83,83,0.07);
+  border-color: rgba(229,83,83,0.2);
   color: var(--accent-warn);
 }
 
 .btn--danger:hover {
-  background: rgba(255,107,107,0.18);
+  background: rgba(229,83,83,0.13);
   border-color: var(--accent-warn);
 }
 
@@ -219,10 +227,11 @@ html, body {
 
 /* Shared card */
 .card {
-  background: var(--bg-elevated);
+  background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 14px;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Empty state */

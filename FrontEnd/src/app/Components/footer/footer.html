@@ -1,0 +1,115 @@
+<!-- footer-toolbar.component.html -->
+<!-- Drawing Tools + Edit Actions Toolbar -->
+
+<footer class="footer-toolbar">
+
+  <!-- Left: Drawing Tools -->
+  <div class="toolbar-group toolbar-group--tools">
+
+    <button class="tool-btn" id="toolSelect" data-tool="select" title="Select (S)">
+      <span class="tool-btn__icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 3l14 9-7 1-4 7z"/>
+        </svg>
+      </span>
+      <span class="tool-btn__label">Select</span>
+    </button>
+
+    <button class="tool-btn" id="toolMove" data-tool="move" title="Move (M)">
+      <span class="tool-btn__icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/>
+          <polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/>
+          <line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/>
+        </svg>
+      </span>
+      <span class="tool-btn__label">Move</span>
+    </button>
+
+    <button class="tool-btn" id="toolAddNode" data-tool="add-node" title="Add Node (N)">
+      <span class="tool-btn__icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="8"/>
+          <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+      </span>
+      <span class="tool-btn__label">Add Node</span>
+    </button>
+
+    <button class="tool-btn" id="toolAddBranch" data-tool="add-branch" title="Add Branch (B)">
+      <span class="tool-btn__icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="14 7 19 12 14 17"/>
+        </svg>
+      </span>
+      <span class="tool-btn__label">Add Branch</span>
+    </button>
+
+    <button class="tool-btn" id="toolSetGain" data-tool="set-gain" title="Set Gain (G)">
+      <span class="tool-btn__icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+      </span>
+      <span class="tool-btn__label">Set Gain</span>
+    </button>
+
+  </div>
+
+  <!-- Center: Separator + Inline Gain Input (appears when Set Gain is active) -->
+  <div class="toolbar-separator"></div>
+
+  <div class="gain-input-group" id="gainInputGroup">
+    <label class="gain-input-label" for="gainValueInput">Gain:</label>
+    <input
+      class="gain-input"
+      id="gainValueInput"
+      type="text"
+      placeholder="e.g. G1 or -2.5"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button class="btn btn--primary gain-apply-btn" id="gainApplyBtn">Apply</button>
+  </div>
+
+  <div class="toolbar-separator toolbar-separator--right"></div>
+
+  <!-- Right: Edit Actions -->
+  <div class="toolbar-group toolbar-group--actions">
+
+    <button class="tool-btn" id="undoBtn" title="Undo (Ctrl+Z)" disabled>
+      <span class="tool-btn__icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 14 4 9 9 4"/>
+          <path d="M20 20v-7a4 4 0 0 0-4-4H4"/>
+        </svg>
+      </span>
+      <span class="tool-btn__label">Undo</span>
+    </button>
+
+    <button class="tool-btn" id="redoBtn" title="Redo (Ctrl+Y)" disabled>
+      <span class="tool-btn__icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 14 20 9 15 4"/>
+          <path d="M4 20v-7a4 4 0 0 1 4-4h12"/>
+        </svg>
+      </span>
+      <span class="tool-btn__label">Redo</span>
+    </button>
+
+    <button class="tool-btn tool-btn--danger" id="deleteBtn" title="Delete Selected (Del)">
+      <span class="tool-btn__icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+          <path d="M9 6V4h6v2"/>
+        </svg>
+      </span>
+      <span class="tool-btn__label">Delete</span>
+    </button>
+
+  </div>
+
+</footer>

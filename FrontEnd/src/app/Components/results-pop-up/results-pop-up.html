@@ -1,0 +1,175 @@
+<!-- results-popup.component.html -->
+<!-- Transfer Function Calculator & Full Results Modal -->
+
+<div class="popup-backdrop" id="popupBackdrop" >
+  <div class="popup-container" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+
+    <!-- Popup Header -->
+    <div class="popup-header">
+      <div class="popup-header__left">
+        <div class="popup-header__icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="popup-title" id="popupTitle">Transfer Function Calculator</h2>
+          <p class="popup-subtitle">Assign numeric values to symbolic gains → compute T(s)</p>
+        </div>
+      </div>
+      <button class="popup-close" id="popupCloseBtn" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Popup Body -->
+    <div class="popup-body">
+
+      <!-- Left Column: Gain Assignments -->
+      <div class="popup-col popup-col--inputs">
+
+        <div class="col-header">
+          <span class="col-title">Symbolic Gains</span>
+          <span class="col-subtitle">Map symbols → numeric values</span>
+        </div>
+
+        <!-- Note about s-domain -->
+        <div class="sdomain-note">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Values can include <code>s</code> (e.g. <code>1/s</code>, <code>s+2</code>)
+        </div>
+
+        <!-- Gain Rows (rendered dynamically via TS) -->
+        <div class="gain-rows" id="gainRows">
+          <!-- Example structure for reference; real rows created in TS:
+          <div class="gain-row">
+            <div class="gain-row__symbol">
+              <span class="gain-symbol-badge">G1</span>
+            </div>
+            <span class="gain-row__eq">=</span>
+            <input class="gain-row__input" type="text" placeholder="e.g. 10 or 1/(s+2)" />
+          </div>
+          -->
+          <p class="empty-gains" id="emptyGainsMsg">No symbolic gains detected. Draw branches with gains like G1, H2...</p>
+        </div>
+
+        <!-- Frequency input -->
+        <div class="frequency-block">
+          <label class="freq-label">Evaluate at s =</label>
+          <input class="freq-input" id="sValueInput" type="text" placeholder="e.g. 2j or leave empty for symbolic"/>
+          <span class="freq-hint">optional</span>
+        </div>
+
+        <!-- Calculate button -->
+        <button class="btn btn--primary calculate-main-btn" id="popupCalculateBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          Calculate T(s)
+        </button>
+
+      </div>
+
+      <!-- Divider -->
+      <div class="popup-col-divider"></div>
+
+      <!-- Right Column: Results -->
+      <div class="popup-col popup-col--results">
+
+        <div class="col-header">
+          <span class="col-title">Analysis Results</span>
+          <span class="col-subtitle">Full Mason's formula breakdown</span>
+        </div>
+
+        <!-- Transfer Function Result (hero) -->
+        <div class="tf-hero" id="tfHero">
+          <div class="tf-hero__label">T(s) =</div>
+          <div class="tf-hero__value" id="tfHeroValue">
+            <span class="tf-pending">Run calculation to see T(s)</span>
+          </div>
+        </div>
+
+        <!-- Results Tabs -->
+        <div class="results-tabs">
+          <button class="results-tab active" data-tab="paths" id="tabPaths">Forward Paths</button>
+          <button class="results-tab" data-tab="loops" id="tabLoops">Loops</button>
+          <button class="results-tab" data-tab="delta" id="tabDelta">Δ Values</button>
+          <button class="results-tab" data-tab="nontouching" id="tabNonTouching">Non-touching</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="tabContent">
+
+          <!-- Forward Paths Tab -->
+          <div class="tab-panel active" id="panelPaths">
+            <div class="results-scroll" id="pathsResultList">
+              <p class="empty-state">No results yet</p>
+            </div>
+          </div>
+
+          <!-- Loops Tab -->
+          <div class="tab-panel" id="panelLoops">
+            <div class="results-scroll" id="loopsResultList">
+              <p class="empty-state">No results yet</p>
+            </div>
+          </div>
+
+          <!-- Delta Tab -->
+          <div class="tab-panel" id="panelDelta">
+            <div class="delta-breakdown" id="deltaBreakdown">
+              <div class="delta-entry">
+                <span class="delta-entry__key">Δ =</span>
+                <span class="delta-entry__val" id="deltaResultMain">—</span>
+              </div>
+              <!-- Δk entries rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Non-touching Tab -->
+          <div class="tab-panel" id="panelNonTouching">
+            <div class="results-scroll" id="nonTouchingResultList">
+              <p class="empty-state">No results yet</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Popup Footer -->
+    <div class="popup-footer">
+      <div class="popup-footer__info" id="calcStatus">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+        </svg>
+        <span>Ready to calculate</span>
+      </div>
+      <div class="popup-footer__actions">
+        <button class="btn btn--ghost" id="popupResetBtn">Reset Values</button>
+        <button class="btn" id="popupCopyBtn" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy T(s)
+        </button>
+        <button class="btn btn--secondary" id="popupExportBtn" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export Report
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
