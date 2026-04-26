@@ -1,0 +1,116 @@
+<!-- Analysis & Results Panel -->
+
+<aside class="left-sidebar">
+
+  <!-- Header -->
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <svg class="logo-icon" viewBox="0 0 28 28" fill="none">
+        <circle cx="6" cy="14" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="14" cy="6" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="22" cy="14" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="14" cy="22" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="9.2" y1="11.8" x2="11.8" y2="8.2" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="16.2" y1="8.2" x2="18.8" y2="11.8" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="19" y1="16.2" x2="16.2" y2="19.8" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="11.8" y1="19.8" x2="9.2" y2="16.2" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <span class="logo-text">SFG<span class="logo-accent">Lab</span></span>
+    </div>
+    <span class="sidebar-tag">Analysis</span>
+  </div>
+
+  <!-- Scrollable body -->
+  <div class="sidebar-body">
+
+    <!-- Mason's Gain Formula Section -->
+    <section class="sidebar-section">
+      <div class="section-header">
+        <span class="section-icon">∑</span>
+        <h3 class="section-title">Mason's Gain Formula</h3>
+      </div>
+      <div class="mason-formula-box">
+        <span class="mason-formula-text">T(s) = Σ(P<sub>k</sub>Δ<sub>k</sub>) / Δ</span>
+      </div>
+      <button class="btn btn--primary btn--full calculate-btn" id="calculateBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        Calculate Transfer Function
+      </button>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Forward Paths -->
+    <section class="sidebar-section">
+      <div class="section-header">
+        <span class="section-icon">→</span>
+        <h3 class="section-title">Forward Paths</h3>
+        <span class="section-count" id="pathCount">0</span>
+      </div>
+      <div class="result-list" id="forwardPathsList">
+        <p class="empty-state">No paths calculated yet</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Individual Loops -->
+    <section class="sidebar-section">
+      <div class="section-header">
+        <span class="section-icon">↺</span>
+        <h3 class="section-title">Individual Loops</h3>
+        <span class="section-count" id="loopCount">0</span>
+      </div>
+      <div class="result-list" id="loopsList">
+        <p class="empty-state">No loops detected yet</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Non-touching Loops -->
+    <section class="sidebar-section">
+      <div class="section-header">
+        <span class="section-icon">⊗</span>
+        <h3 class="section-title">Non-touching Loops</h3>
+        <span class="section-count" id="nonTouchingCount">0</span>
+      </div>
+      <div class="result-list" id="nonTouchingList">
+        <p class="empty-state">No combinations yet</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Delta Values -->
+    <section class="sidebar-section">
+      <div class="section-header">
+        <span class="section-icon">Δ</span>
+        <h3 class="section-title">Delta Values</h3>
+      </div>
+      <div class="delta-grid" id="deltaGrid">
+        <div class="delta-row">
+          <span class="delta-label">Δ =</span>
+          <span class="delta-value" id="deltaMain">Not calculated</span>
+        </div>
+        <!-- Δ_k values rendered dynamically -->
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Transfer Function -->
+    <section class="sidebar-section">
+      <div class="section-header">
+        <span class="section-icon">T</span>
+        <h3 class="section-title">Transfer Function T(s)</h3>
+      </div>
+      <div class="tf-display" id="tfDisplay">
+        <span class="tf-placeholder">Calculate to see result</span>
+      </div>
+    </section>
+
+  </div>
+</aside>
