@@ -1,116 +1,202 @@
-<!-- Analysis & Results Panel -->
+<!-- left-sidebar.component.html -->
+<!-- Compact Accordion Sidebar — bars expand inline, no deep scroll -->
 
 <aside class="left-sidebar">
 
-  <!-- Header -->
+  <!-- ── Header ── -->
   <div class="sidebar-header">
     <div class="sidebar-logo">
       <svg class="logo-icon" viewBox="0 0 28 28" fill="none">
-        <circle cx="6" cy="14" r="3.5" stroke="currentColor" stroke-width="1.5"/>
-        <circle cx="14" cy="6" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="6"  cy="14" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="14" cy="6"  r="3.5" stroke="currentColor" stroke-width="1.5"/>
         <circle cx="22" cy="14" r="3.5" stroke="currentColor" stroke-width="1.5"/>
         <circle cx="14" cy="22" r="3.5" stroke="currentColor" stroke-width="1.5"/>
-        <line x1="9.2" y1="11.8" x2="11.8" y2="8.2" stroke="currentColor" stroke-width="1.5"/>
-        <line x1="16.2" y1="8.2" x2="18.8" y2="11.8" stroke="currentColor" stroke-width="1.5"/>
-        <line x1="19" y1="16.2" x2="16.2" y2="19.8" stroke="currentColor" stroke-width="1.5"/>
-        <line x1="11.8" y1="19.8" x2="9.2" y2="16.2" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="9.2"  y1="11.8" x2="11.8" y2="8.2"  stroke="currentColor" stroke-width="1.5"/>
+        <line x1="16.2" y1="8.2"  x2="18.8" y2="11.8" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="19"   y1="16.2" x2="16.2" y2="19.8" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="11.8" y1="19.8" x2="9.2"  y2="16.2" stroke="currentColor" stroke-width="1.5"/>
       </svg>
       <span class="logo-text">SFG<span class="logo-accent">Lab</span></span>
     </div>
-    <span class="sidebar-tag">Analysis</span>
+    <span class="sidebar-tag">v1.0</span>
   </div>
 
-  <!-- Scrollable body -->
+  <!-- ── Scrollable Body ── -->
   <div class="sidebar-body">
 
-    <!-- Mason's Gain Formula Section -->
-    <section class="sidebar-section">
-      <div class="section-header">
-        <span class="section-icon">∑</span>
-        <h3 class="section-title">Mason's Gain Formula</h3>
-      </div>
+    <!-- ════ Calculate Bar ════ -->
+    <div class="sidebar-section">
       <div class="mason-formula-box">
         <span class="mason-formula-text">T(s) = Σ(P<sub>k</sub>Δ<sub>k</sub>) / Δ</span>
       </div>
       <button class="btn btn--primary btn--full calculate-btn" id="calculateBtn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polygon points="5 3 19 12 5 21 5 3"/>
         </svg>
         Calculate Transfer Function
       </button>
-    </section>
+    </div>
 
     <div class="divider"></div>
 
-    <!-- Forward Paths -->
-    <section class="sidebar-section">
-      <div class="section-header">
-        <span class="section-icon">→</span>
-        <h3 class="section-title">Forward Paths</h3>
-        <span class="section-count" id="pathCount">0</span>
-      </div>
-      <div class="result-list" id="forwardPathsList">
-        <p class="empty-state">No paths calculated yet</p>
-      </div>
-    </section>
+    <!-- ════ Transfer Function Result ════ -->
+    <div class="accordion-bar" id="barTF">
+      <button class="acc-trigger" id="triggerTF" aria-expanded="false" aria-controls="panelTF">
+        <span class="acc-trigger__left">
+          <span class="acc-icon acc-icon--tf">T</span>
+          <span class="acc-label">Transfer Function</span>
+        </span>
+        <span class="acc-trigger__right">
+          <span class="acc-status" id="tfStatus">—</span>
+          <svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </span>
+      </button>
+      <div class="acc-panel" id="panelTF" role="region" aria-labelledby="triggerTF">
+        <div class="acc-panel__inner">
 
-    <div class="divider"></div>
+          <!-- Symbolic result -->
+          <div class="tf-result-block" id="tfSymbolicBlock">
+            <div class="tf-result-label">Symbolic T(s)</div>
+            <div class="tf-result-value" id="tfSymbolicValue">
+              <span class="tf-placeholder">Run calculation first</span>
+            </div>
+          </div>
 
-    <!-- Individual Loops -->
-    <section class="sidebar-section">
-      <div class="section-header">
-        <span class="section-icon">↺</span>
-        <h3 class="section-title">Individual Loops</h3>
-        <span class="section-count" id="loopCount">0</span>
-      </div>
-      <div class="result-list" id="loopsList">
-        <p class="empty-state">No loops detected yet</p>
-      </div>
-    </section>
+          <!-- Numeric result (shown after substitution) -->
+          <div class="tf-result-block tf-result-block--numeric" id="tfNumericBlock" style="display:none">
+            <div class="tf-result-label">Evaluated T(s)</div>
+            <div class="tf-result-value tf-result-value--numeric" id="tfNumericValue">—</div>
+          </div>
 
-    <div class="divider"></div>
+          <!-- Gain substitution inputs — populated dynamically -->
+          <div class="gain-sub-section" id="gainSubSection" style="display:none">
+            <div class="gain-sub-header">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+              Substitute Gain Values
+            </div>
+            <!-- JS populates: .gain-sub-row items -->
+            <div class="gain-sub-rows" id="gainSubRows"></div>
+            <div class="gain-sub-actions">
+              <input
+                class="freq-input"
+                id="sValueInput"
+                type="text"
+                placeholder="Evaluate at s = (optional, e.g. 2j)"
+              />
+              <button class="btn btn--secondary btn--sm" id="substituteBtn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="17 1 21 5 17 9"/>
+                  <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                  <polyline points="7 23 3 19 7 15"/>
+                  <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                </svg>
+                Substitute
+              </button>
+            </div>
+          </div>
 
-    <!-- Non-touching Loops -->
-    <section class="sidebar-section">
-      <div class="section-header">
-        <span class="section-icon">⊗</span>
-        <h3 class="section-title">Non-touching Loops</h3>
-        <span class="section-count" id="nonTouchingCount">0</span>
-      </div>
-      <div class="result-list" id="nonTouchingList">
-        <p class="empty-state">No combinations yet</p>
-      </div>
-    </section>
-
-    <div class="divider"></div>
-
-    <!-- Delta Values -->
-    <section class="sidebar-section">
-      <div class="section-header">
-        <span class="section-icon">Δ</span>
-        <h3 class="section-title">Delta Values</h3>
-      </div>
-      <div class="delta-grid" id="deltaGrid">
-        <div class="delta-row">
-          <span class="delta-label">Δ =</span>
-          <span class="delta-value" id="deltaMain">Not calculated</span>
         </div>
-        <!-- Δ_k values rendered dynamically -->
       </div>
-    </section>
+    </div>
 
-    <div class="divider"></div>
-
-    <!-- Transfer Function -->
-    <section class="sidebar-section">
-      <div class="section-header">
-        <span class="section-icon">T</span>
-        <h3 class="section-title">Transfer Function T(s)</h3>
+    <!-- ════ Forward Paths ════ -->
+    <div class="accordion-bar" id="barPaths">
+      <button class="acc-trigger" id="triggerPaths" aria-expanded="false" aria-controls="panelPaths">
+        <span class="acc-trigger__left">
+          <span class="acc-icon">→</span>
+          <span class="acc-label">Forward Paths</span>
+        </span>
+        <span class="acc-trigger__right">
+          <span class="acc-badge" id="pathCount">0</span>
+          <svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </span>
+      </button>
+      <div class="acc-panel" id="panelPaths" role="region" aria-labelledby="triggerPaths">
+        <div class="acc-panel__inner">
+          <div class="result-cards" id="forwardPathsList">
+            <p class="empty-state">No paths calculated yet</p>
+          </div>
+        </div>
       </div>
-      <div class="tf-display" id="tfDisplay">
-        <span class="tf-placeholder">Calculate to see result</span>
-      </div>
-    </section>
+    </div>
 
-  </div>
+    <!-- ════ Individual Loops ════ -->
+    <div class="accordion-bar" id="barLoops">
+      <button class="acc-trigger" id="triggerLoops" aria-expanded="false" aria-controls="panelLoops">
+        <span class="acc-trigger__left">
+          <span class="acc-icon">↺</span>
+          <span class="acc-label">Individual Loops</span>
+        </span>
+        <span class="acc-trigger__right">
+          <span class="acc-badge" id="loopCount">0</span>
+          <svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </span>
+      </button>
+      <div class="acc-panel" id="panelLoops" role="region" aria-labelledby="triggerLoops">
+        <div class="acc-panel__inner">
+          <div class="result-cards" id="loopsList">
+            <p class="empty-state">No loops detected yet</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ Non-touching Loops ════ -->
+    <div class="accordion-bar" id="barNonTouching">
+      <button class="acc-trigger" id="triggerNT" aria-expanded="false" aria-controls="panelNT">
+        <span class="acc-trigger__left">
+          <span class="acc-icon">⊗</span>
+          <span class="acc-label">Non-touching Loops</span>
+        </span>
+        <span class="acc-trigger__right">
+          <span class="acc-badge" id="nonTouchingCount">0</span>
+          <svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </span>
+      </button>
+      <div class="acc-panel" id="panelNT" role="region" aria-labelledby="triggerNT">
+        <div class="acc-panel__inner">
+          <div class="result-cards" id="nonTouchingList">
+            <p class="empty-state">No combinations yet</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ Delta Values ════ -->
+    <div class="accordion-bar" id="barDelta">
+      <button class="acc-trigger" id="triggerDelta" aria-expanded="false" aria-controls="panelDelta">
+        <span class="acc-trigger__left">
+          <span class="acc-icon acc-icon--delta">Δ</span>
+          <span class="acc-label">Delta Values</span>
+        </span>
+        <span class="acc-trigger__right">
+          <svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </span>
+      </button>
+      <div class="acc-panel" id="panelDelta" role="region" aria-labelledby="triggerDelta">
+        <div class="acc-panel__inner">
+          <div class="delta-grid" id="deltaGrid">
+            <div class="delta-row">
+              <span class="delta-label">Δ =</span>
+              <span class="delta-value" id="deltaMain">Not calculated</span>
+            </div>
+            <!-- Δk rows injected by TS/JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sidebar-body -->
 </aside>
