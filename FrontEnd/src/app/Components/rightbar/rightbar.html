@@ -1,6 +1,4 @@
 <!-- right-sidebar.component.html -->
-<!-- File Operations + Current Graph Info Panel -->
-
 <aside class="right-sidebar">
 
   <!-- Current Graph Info -->
@@ -8,31 +6,31 @@
     <div class="section-header">
       <div class="section-icon-box">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
           <line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
       </div>
       <h3 class="section-title">Graph Info</h3>
-      <!-- Live indicator -->
       <span class="live-dot"></span>
     </div>
 
     <div class="info-grid">
       <div class="info-row">
         <span class="info-label">Nodes</span>
-        <span class="info-value" id="infoNodes">0</span>
+        <span class="info-value" [class.nonzero]="nodeCount > 0">{{ nodeCount }}</span>
       </div>
       <div class="info-row">
         <span class="info-label">Edges</span>
-        <span class="info-value" id="infoEdges">0</span>
+        <span class="info-value" [class.nonzero]="edgeCount > 0">{{ edgeCount }}</span>
       </div>
       <div class="info-row">
         <span class="info-label">Loops</span>
-        <span class="info-value" id="infoLoops">0</span>
+        <span class="info-value" [class.nonzero]="loopCount > 0">{{ loopCount }}</span>
       </div>
       <div class="info-row">
         <span class="info-label">Paths</span>
-        <span class="info-value" id="infoPaths">0</span>
+        <span class="info-value" [class.nonzero]="pathCount > 0">{{ pathCount }}</span>
       </div>
     </div>
   </section>
@@ -52,9 +50,16 @@
     </div>
 
     <div class="file-ops">
+      <!-- Hidden file input -->
+      <input
+        #txtFileInput
+        type="file"
+        accept=".txt"
+        style="display:none"
+        (change)="onFileSelected($event)"/>
 
       <!-- Load TXT -->
-      <button class="file-btn" id="loadTxtBtn" title="Load graph from .txt file">
+      <button class="file-btn" (click)="openFilePicker(txtFileInput)">
         <div class="file-btn__icon file-btn__icon--load">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -71,11 +76,8 @@
         </svg>
       </button>
 
-      <!-- Hidden file input -->
-      <input type="file" id="txtFileInput" accept=".txt" style="display:none"/>
-
       <!-- Export Image -->
-      <button class="file-btn" id="exportImageBtn" title="Export canvas as PNG">
+      <button class="file-btn" (click)="onExport()">
         <div class="file-btn__icon file-btn__icon--export">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -85,46 +87,66 @@
         </div>
         <div class="file-btn__text">
           <span class="file-btn__label">Export Image</span>
-          <span class="file-btn__sub">PNG / SVG</span>
+          <span class="file-btn__sub">PNG</span>
         </div>
         <svg class="file-btn__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="9 18 15 12 9 6"/>
         </svg>
       </button>
+    </div>
 
+    <!-- Parse success banner -->
+    <div class="parse-banner parse-banner--success" *ngIf="parseSuccess">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Graph loaded successfully!
+    </div>
+
+    <!-- Parse error list -->
+    <div class="parse-banner parse-banner--error" *ngIf="parseErrors.length > 0">
+      <div class="parse-banner__header">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        File has {{ parseErrors.length }} error(s):
+        <button class="parse-banner__close" (click)="clearErrors()">✕</button>
+      </div>
+      <ul class="parse-error-list">
+        <li *ngFor="let err of parseErrors">{{ err }}</li>
+      </ul>
     </div>
 
     <!-- TXT Format hint -->
-    <div class="format-hint" id="formatHint">
+    <div class="format-hint">
       <div class="hint-header">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <circle cx="12" cy="12" r="10"/>
           <line x1="12" y1="8" x2="12" y2="12"/>
           <line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
-        <span>TXT File Format</span>
+        TXT File Format
       </div>
       <pre class="hint-code">nodes: x1,x2,x3,x4
 edges:
 x1->x2: G1
 x2->x3: G2
-x3->x4: G3
 x3->x2: -H1
+x3->x4: G3
 input: x1
 output: x4</pre>
     </div>
-
   </section>
 
   <div class="divider"></div>
 
-  <!-- Graph Status -->
+  <!-- Status -->
   <section class="sidebar-section">
-    <div class="status-block" id="graphStatus">
-      <div class="status-indicator status-indicator--idle">
-        <span class="status-dot"></span>
-        <span class="status-text">Graph empty</span>
-      </div>
+    <div class="status-indicator" [ngClass]="statusClass">
+      <span class="status-dot"></span>
+      <span class="status-text">{{ statusLabel }}</span>
     </div>
   </section>
 
