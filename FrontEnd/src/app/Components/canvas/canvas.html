@@ -1,42 +1,47 @@
 <!-- canvas.component.html -->
-<!-- Main SFG Drawing Canvas -->
-
 <div class="canvas-wrapper">
 
-  <!-- Canvas Topbar -->
+  <!-- Topbar -->
   <div class="canvas-topbar">
     <div class="canvas-topbar__left">
       <span class="canvas-topbar__label">Canvas</span>
     </div>
+
     <div class="canvas-topbar__center">
-      <!-- Node I/O Assignment -->
       <div class="io-assign">
         <label class="io-assign__label">Input:</label>
-        <select class="io-assign__select" id="inputNodeSelect">
+        <select class="io-assign__select"
+                [ngModel]="graph.inputNode"
+                (ngModelChange)="onInputNodeChange($event)">
           <option value="">— select —</option>
+          <option *ngFor="let id of nodeIds" [value]="id">{{ id }}</option>
         </select>
         <span class="io-assign__sep">→</span>
         <label class="io-assign__label">Output:</label>
-        <select class="io-assign__select" id="outputNodeSelect">
+        <select class="io-assign__select"
+                [ngModel]="graph.outputNode"
+                (ngModelChange)="onOutputNodeChange($event)">
           <option value="">— select —</option>
+          <option *ngFor="let id of nodeIds" [value]="id">{{ id }}</option>
         </select>
       </div>
     </div>
+
     <div class="canvas-topbar__right">
-      <!-- Zoom Controls -->
       <div class="zoom-controls">
-        <button class="zoom-btn" id="zoomOutBtn" title="Zoom Out">
+        <button class="zoom-btn" (click)="zoomOut()" title="Zoom Out">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
         </button>
-        <span class="zoom-level" id="zoomLevel">100%</span>
-        <button class="zoom-btn" id="zoomInBtn" title="Zoom In">
+        <span class="zoom-level">{{ zoomPercent }}%</span>
+        <button class="zoom-btn" (click)="zoomIn()" title="Zoom In">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
         </button>
-        <button class="zoom-btn" id="fitBtn" title="Fit to Screen">
+        <button class="zoom-btn" (click)="fitToScreen()" title="Fit to Screen">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
           </svg>
@@ -45,17 +50,15 @@
     </div>
   </div>
 
-  <!-- SVG / Cytoscape Mount Point -->
-  <div class="canvas-area" id="canvasArea">
+  <!-- Canvas Area -->
+  <div class="canvas-area">
+    <div class="canvas-grid"></div>
 
-    <!-- Grid background (CSS drawn) -->
-    <div class="canvas-grid" id="canvasGrid"></div>
+    <!-- Cytoscape mount -->
+    <div class="cy-container" #cyContainer></div>
 
-    <!-- Cytoscape.js or D3 mounts here -->
-    <div class="cy-container" id="cy"></div>
-
-    <!-- Empty-state overlay -->
-    <div class="canvas-empty" id="canvasEmpty">
+    <!-- Empty state overlay -->
+    <div class="canvas-empty" [class.hidden]="!isEmpty">
       <div class="empty-icon">
         <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
           <circle cx="14" cy="28" r="6" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
@@ -69,20 +72,12 @@
         </svg>
       </div>
       <p class="empty-title">Start Building Your Signal Flow Graph</p>
-      <p class="empty-subtitle">Use the toolbar below to add nodes and connections,<br/>or load from a .txt file</p>
+      <p class="empty-subtitle">Use the toolbar below or load a .txt file</p>
       <div class="empty-hints">
-        <span class="empty-hint">
-          <kbd>N</kbd> Add Node
-        </span>
-        <span class="empty-hint">
-          <kbd>B</kbd> Add Branch
-        </span>
-        <span class="empty-hint">
-          <kbd>Del</kbd> Delete
-        </span>
+        <span class="empty-hint"><kbd>Add Node</kbd> then click canvas</span>
+        <span class="empty-hint"><kbd>Add Branch</kbd> then tap two nodes</span>
       </div>
     </div>
-
   </div>
 
 </div>
