@@ -39,3 +39,166 @@ app-canvas {
 app-footer-toolbar {
   flex-shrink: 0;
 }
+
+/* ── Dynamic Error Window ── */
+.dynamic-errors-window {
+  position: absolute;
+  top: 20px;
+  right: 260px; /* Offset to not overlap rightbar (240px + padding) */
+  width: 300px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-normal);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideInDown 0.3s ease;
+}
+
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dynamic-errors-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255, 69, 58, 0.1);
+  color: #FF453A;
+  font-weight: 600;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dynamic-errors-list {
+  list-style: none;
+  padding: 10px 14px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dynamic-errors-list li {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  position: relative;
+  padding-left: 12px;
+}
+
+.dynamic-errors-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #FF453A;
+}
+
+/* ── Large Calculation Error Modal ── */
+.error-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-modal-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-normal);
+  border-radius: var(--radius-lg);
+  width: 480px;
+  max-width: 90vw;
+  padding: 32px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.error-modal-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 69, 58, 0.1);
+  color: #FF453A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.error-modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.error-modal-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.error-modal-list-wrapper {
+  width: 100%;
+  background: var(--bg-body);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 24px;
+  max-height: 200px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.error-modal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error-modal-list li {
+  font-size: 13px;
+  color: var(--text-primary);
+  position: relative;
+  padding-left: 16px;
+  line-height: 1.4;
+}
+
+.error-modal-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: #FF453A;
+  font-family: monospace;
+}
+
+.error-modal-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  cursor: pointer;
+}

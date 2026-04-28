@@ -10,7 +10,7 @@ import { GainModal } from '../gainmenu/gain-modal.component';
 import cytoscape from 'cytoscape';
 import { ParsedGraph } from '../../Models/parsed-graph';
 
-type ToolId = 'select' | 'move' | 'add-node' | 'add-branch' | 'set-gain';
+type ToolId = 'select' | 'move' | 'add-node' | 'add-branch';
 
 @Component({
   selector: 'app-canvas',
@@ -25,10 +25,10 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() graph: ParsedGraph = { nodes: [], edges: [], inputNode: '', outputNode: '' };
   @Input() activeTool: ToolId = 'select';
-  @Input() pendingGainValue = '0';
   @Output() graphChanged     = new EventEmitter<ParsedGraph>();
   @Output() inputNodeChange  = new EventEmitter<string>();
   @Output() outputNodeChange = new EventEmitter<string>();
+  @Output() selectionChanged = new EventEmitter<any>();
 
   zoomPercent = 100;
 
@@ -240,7 +240,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
 
     // Click on edge — opens modal instead of prompt()
     this.cy.on('click', 'edge', (evt) => {
-      if (this.activeTool === 'set-gain') {
+      if (this.activeTool === 'add-branch') {
         const currentGain = evt.target.data('gain') as string;
         const source      = evt.target.data('source') as string;
         const target      = evt.target.data('target') as string;
@@ -248,19 +248,25 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
           this.pendingEdgeId         = evt.target.id();
           this.pendingSource2        = source;
           this.pendingTarget2        = target;
-          // Pre-fill: use footer's pending gain if set, otherwise the edge's current gain
-          this.gainModalInitialValue = this.pendingGainValue !== '1'
-            ? this.pendingGainValue
-            : (currentGain || '1');
+          // Pre-fill: use edge's current gain or 1
+          this.gainModalInitialValue = currentGain || '1';
           this.gainModalMode         = 'set-gain';
           this.showGainModal         = true;
         });
       }
     });
 
+    // Selection events
+    this.cy.on('select unselect', 'node, edge', () => {
+      this.ngZone.run(() => this.emitSelection());
+    });
+
     // Sync positions after drag
     this.cy.on('dragfree', 'node', () => {
-      this.ngZone.run(() => this.emitGraphChanged());
+      this.ngZone.run(() => {
+        this.emitGraphChanged();
+        this.emitSelection();
+      });
     });
   }
 
@@ -272,7 +278,6 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
       'move':       'grab',
       'add-node':   'crosshair',
       'add-branch': 'cell',
-      'set-gain':   'pointer',
     };
     container.style.cursor = cursors[this.activeTool] ?? 'default';
 
@@ -321,8 +326,8 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
       this.pendingTarget2 = nodeId;
       this.clearPendingSource();
 
-      // Pre-fill with footer's pending gain value
-      this.gainModalInitialValue = this.pendingGainValue || '1';
+      // Pre-fill with default 1
+      this.gainModalInitialValue = '1';
       this.gainModalMode         = 'add-branch';
       this.pendingEdgeId         = null;
 
@@ -334,6 +339,14 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
   onGainConfirmed(gain: string): void {
     this.showGainModal = false;
 
+    // Zero Gain Block
+    const numGain = parseFloat(gain);
+    if (gain === '0' || numGain === 0) {
+      alert('Zero Gain Block: A branch with gain 0 is mathematically equivalent to no connection and is rejected.');
+      this.pendingEdgeId = null;
+      return;
+    }
+
     if (this.gainModalMode === 'set-gain' && this.pendingEdgeId) {
       // ── Update existing edge gain ──
       this.pushUndo();
@@ -343,9 +356,23 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
       if (edge) edge.gain = gain;
       this.pendingEdgeId = null;
       this.emitGraphChanged();
+      this.emitSelection();
 
     } else {
-      // ── Create new edge ──
+      // ── Create new edge or merge parallel ──
+      const existingEdge = this.graph.edges.find(e => e.from === this.pendingSource2 && e.to === this.pendingTarget2);
+      
+      if (existingEdge) {
+        this.pushUndo();
+        // Sum parallel branches
+        const newGain = `(${existingEdge.gain}) + (${gain})`;
+        existingEdge.gain = newGain;
+        this.cy.$(`#${existingEdge.id}`).data('gain', newGain);
+        this.emitGraphChanged();
+        this.emitSelection();
+        return;
+      }
+
       this.pushUndo();
       const edgeId = `e_${this.pendingSource2}_${this.pendingTarget2}_${Date.now()}`;
       const isSelf = this.pendingSource2 === this.pendingTarget2;
@@ -497,6 +524,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     this.graph = this.undoStack.pop()!;
     this.renderGraph(false);
     this.emitGraphChanged();
+    this.emitSelection();
   }
 
   redo(): void {
@@ -505,6 +533,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     this.graph = this.redoStack.pop()!;
     this.renderGraph(false);
     this.emitGraphChanged();
+    this.emitSelection();
   }
 
   private cloneGraph(): ParsedGraph {
@@ -536,5 +565,59 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
       }
     });
     this.graphChanged.emit(this.cloneGraph());
+  }
+
+  private emitSelection(): void {
+    const selected = this.cy.$(':selected');
+    if (selected.length !== 1) {
+      this.selectionChanged.emit(null);
+      return;
+    }
+    const el = selected.first();
+    if (el.isNode()) {
+      const id = el.id();
+      const nodeData = this.graph.nodes.find(n => n.id === id);
+      const incoming = el.incomers('edge').map(e => e.data('source'));
+      const outgoing = el.outgoers('edge').map(e => e.data('target'));
+      this.selectionChanged.emit({
+        type: 'node',
+        id: id,
+        label: nodeData?.label || id,
+        x: Math.round(el.position('x')),
+        y: Math.round(el.position('y')),
+        incoming: Array.from(new Set(incoming)),
+        outgoing: Array.from(new Set(outgoing))
+      });
+    } else if (el.isEdge()) {
+      this.selectionChanged.emit({
+        type: 'edge',
+        id: el.id(),
+        source: el.data('source'),
+        target: el.data('target'),
+        gain: el.data('gain')
+      });
+    }
+  }
+
+  public openGainModalForEdge(edgeId: string): void {
+    const cyEdge = this.cy.$(`#${edgeId}`);
+    if (cyEdge.length === 0) return;
+    this.pendingEdgeId = edgeId;
+    this.pendingSource2 = cyEdge.data('source');
+    this.pendingTarget2 = cyEdge.data('target');
+    this.gainModalInitialValue = cyEdge.data('gain') || '1';
+    this.gainModalMode = 'set-gain';
+    this.showGainModal = true;
+  }
+
+  public updateNodeLabel(nodeId: string, newLabel: string): void {
+    this.pushUndo();
+    const node = this.graph.nodes.find(n => n.id === nodeId);
+    if (node) {
+      node.label = newLabel;
+      this.cy.$(`#${nodeId}`).data('label', newLabel);
+      this.emitGraphChanged();
+      this.emitSelection();
+    }
   }
 }

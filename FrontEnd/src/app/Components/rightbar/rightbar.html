@@ -142,6 +142,77 @@ output: x4</pre>
 
   <div class="divider"></div>
 
+  <!-- Selection Details -->
+  <section class="sidebar-section">
+    <div class="section-header">
+      <div class="section-icon-box">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+      <h3 class="section-title">Selection Details</h3>
+    </div>
+
+    <div class="info-grid selection-grid">
+      <ng-container *ngIf="!selectedItem">
+        <div class="empty-state" style="padding: 16px;">
+          Select a node or branch to view properties.
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="selectedItem?.type === 'node'">
+        <div class="info-row">
+          <span class="info-label">Node ID</span>
+          <span class="info-value">{{ selectedItem.id }}</span>
+        </div>
+        <div class="info-row" style="flex-wrap: wrap;">
+          <span class="info-label" style="margin-top: 4px;">Label</span>
+          <div *ngIf="!editingLabel" class="label-display" style="display:flex; align-items:center; gap:8px;">
+            <span class="info-value">{{ selectedItem.label }}</span>
+            <button class="btn btn--ghost" style="padding: 2px 6px; font-size:10px;" (click)="startEditLabel()">Edit</button>
+          </div>
+          <div *ngIf="editingLabel" class="label-edit" style="display:flex; align-items:center; gap:4px; width:100%; margin-top:8px;">
+            <input class="gain-input" type="text" [(ngModel)]="tempLabel" (keydown.enter)="saveLabel()" (keydown.escape)="cancelEditLabel()" style="flex:1" autofocus>
+            <button class="btn btn--primary" style="padding: 4px 8px; font-size:10px;" (click)="saveLabel()">Save</button>
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Position</span>
+          <span class="info-value" style="font-size: 11px; font-weight: normal;">{{ selectedItem.x }}, {{ selectedItem.y }}</span>
+        </div>
+        <div class="info-row" *ngIf="selectedItem.incoming?.length">
+          <span class="info-label">Incoming</span>
+          <span class="info-value" style="font-size: 10px; max-width: 120px; overflow-wrap: break-word; text-align: right;">{{ selectedItem.incoming.join(', ') }}</span>
+        </div>
+        <div class="info-row" *ngIf="selectedItem.outgoing?.length">
+          <span class="info-label">Outgoing</span>
+          <span class="info-value" style="font-size: 10px; max-width: 120px; overflow-wrap: break-word; text-align: right;">{{ selectedItem.outgoing.join(', ') }}</span>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="selectedItem?.type === 'edge'">
+        <div class="info-row">
+          <span class="info-label">Source</span>
+          <span class="info-value">{{ selectedItem.source }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Target</span>
+          <span class="info-value">{{ selectedItem.target }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Gain</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="info-value" style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ selectedItem.gain }}</span>
+            <button class="btn btn--secondary" style="padding: 2px 6px; font-size:10px;" (click)="requestEditGain()">Change</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
   <!-- Status -->
   <section class="sidebar-section">
     <div class="status-indicator" [ngClass]="statusClass">

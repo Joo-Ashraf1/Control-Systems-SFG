@@ -1,14 +1,52 @@
 <div class="app-shell">
 
-  <app-left-bar></app-left-bar>
+  <!-- Dynamic Error Window -->
+  <div class="dynamic-errors-window" *ngIf="currentErrors.length > 0">
+    <div class="dynamic-errors-header">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      Graph Warnings ({{currentErrors.length}})
+    </div>
+    <ul class="dynamic-errors-list">
+      <li *ngFor="let err of currentErrors">{{ err }}</li>
+    </ul>
+  </div>
+
+  <!-- Large Calculation Error Modal -->
+  <div class="error-modal-backdrop" *ngIf="showErrorModal">
+    <div class="error-modal-box">
+      <div class="error-modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <h2 class="error-modal-title">Calculation Blocked</h2>
+      <p class="error-modal-subtitle">Your graph contains structural errors that must be resolved before calculating.</p>
+      
+      <div class="error-modal-list-wrapper">
+        <ul class="error-modal-list">
+          <li *ngFor="let err of currentErrors">{{ err }}</li>
+        </ul>
+      </div>
+
+      <button class="btn btn--primary error-modal-btn" (click)="closeErrorModal()">I understand, let me fix it</button>
+    </div>
+  </div>
+
+  <app-left-bar (calculateRequested)="onCalculate()"></app-left-bar>
 
   <div class="app-main">
     <app-canvas
       #canvasRef
       [graph]="graph"
       [activeTool]="activeTool"
-      [pendingGainValue]="pendingGain"
-      (graphChanged)="onGraphChanged($event)">
+      (graphChanged)="onGraphChanged($event)"
+      (selectionChanged)="onSelectionChanged($event)">
     </app-canvas>
 
     <app-footer
@@ -16,7 +54,6 @@
       [canUndo]="canvasRef.canUndo"
       [canRedo]="canvasRef.canRedo"
       (toolChanged)="onToolChanged($event)"
-      (gainApplied)="onGainApplied($event)"
       (undoRequested)="onUndoRequested()"
       (redoRequested)="onRedoRequested()"
       (deleteRequested)="onDeleteRequested()">
@@ -26,8 +63,11 @@
   <app-rightbar
     [graph]="graph"
     [result]="result"
+    [selectedItem]="selectedItem"
     (graphLoaded)="onGraphLoaded($event)"
-    (exportRequest)="onExportRequest()">
+    (exportRequest)="onExportRequest()"
+    (editGainRequested)="onEditGainRequested($event)"
+    (nodeLabelChanged)="onNodeLabelChanged($event)">
   </app-rightbar>
 
   <app-results-pop-up></app-results-pop-up>

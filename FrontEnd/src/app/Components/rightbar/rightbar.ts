@@ -1,5 +1,6 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {NgClass} from '@angular/common';
+import {Component, EventEmitter, Input, Output, OnChanges, SimpleChanges} from '@angular/core';
+import {NgClass, NgIf, NgFor} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import {ParsedGraph} from '../../Models/parsed-graph';
 import { Results } from '../../Models/results';
 import {Parsing} from '../../Services/parsing';
@@ -8,12 +9,12 @@ import { TxtParseResult } from '../../Models/txt-parse-result';
 @Component({
   selector: 'app-rightbar',
   imports: [
-    NgClass
+    NgClass, NgIf, NgFor, FormsModule
   ],
   templateUrl: './rightbar.html',
   styleUrl: './rightbar.css',
 })
-export class Rightbar {
+export class Rightbar implements OnChanges {
   @Input() graph:ParsedGraph={
     nodes: [],
     edges: [],
@@ -21,13 +22,51 @@ export class Rightbar {
     outputNode: ''
   };
   @Input() result:Results|null=null;
+  @Input() selectedItem: any = null;
 
   @Output() graphLoaded = new EventEmitter<ParsedGraph>();
   @Output() exportRequest= new EventEmitter<void>();
-   parseErrors: string[] = [];
+  @Output() editGainRequested = new EventEmitter<string>();
+  @Output() nodeLabelChanged = new EventEmitter<{id: string, label: string}>();
+
+  parseErrors: string[] = [];
   parseSuccess = false;
 
+  editingLabel = false;
+  tempLabel = '';
+
   constructor(private p: Parsing) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedItem'] && this.selectedItem?.type === 'node') {
+      this.tempLabel = this.selectedItem.label;
+      this.editingLabel = false;
+    }
+  }
+
+  startEditLabel(): void {
+    this.editingLabel = true;
+    this.tempLabel = this.selectedItem.label;
+  }
+
+  saveLabel(): void {
+    const trimmed = this.tempLabel.trim();
+    if (trimmed && trimmed !== this.selectedItem.label) {
+      this.nodeLabelChanged.emit({ id: this.selectedItem.id, label: trimmed });
+    }
+    this.editingLabel = false;
+  }
+
+  cancelEditLabel(): void {
+    this.editingLabel = false;
+    this.tempLabel = this.selectedItem.label;
+  }
+
+  requestEditGain(): void {
+    if (this.selectedItem && this.selectedItem.type === 'edge') {
+      this.editGainRequested.emit(this.selectedItem.id);
+    }
+  }
   get nodeCount(): number {
     return this.graph.nodes.length;
   }
