@@ -81,3 +81,13 @@
   </div>
 
 </div>
+
+<app-gain-modal
+  [visible]="showGainModal"
+  [sourceNode]="pendingSource2"
+  [targetNode]="pendingTarget2"
+  [initialValue]="gainModalInitialValue"
+  [mode]="gainModalMode"
+  (confirmed)="onGainConfirmed($event)"
+  (cancelled)="onGainCancelled()">
+</app-gain-modal>

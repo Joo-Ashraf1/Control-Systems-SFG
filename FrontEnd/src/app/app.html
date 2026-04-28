@@ -1,27 +1,35 @@
 <div class="app-shell">
-  <app-left-bar> </app-left-bar>
+
+  <app-left-bar></app-left-bar>
+
   <div class="app-main">
     <app-canvas
-     #canvasRef
+      #canvasRef
       [graph]="graph"
       [activeTool]="activeTool"
-      (graphChanged)="onGraphChanged($event)">></app-canvas>
+      [pendingGainValue]="pendingGain"
+      (graphChanged)="onGraphChanged($event)">
+    </app-canvas>
+
     <app-footer
-    [activeTool]="activeTool"
+      [activeTool]="activeTool"
       [canUndo]="canvasRef.canUndo"
       [canRedo]="canvasRef.canRedo"
       (toolChanged)="onToolChanged($event)"
       (gainApplied)="onGainApplied($event)"
       (undoRequested)="onUndoRequested()"
       (redoRequested)="onRedoRequested()"
-      (deleteRequested)="onDeleteRequested()">>
+      (deleteRequested)="onDeleteRequested()">
     </app-footer>
-
   </div>
+
   <app-rightbar
-   [graph]="graph"
+    [graph]="graph"
     [result]="result"
     (graphLoaded)="onGraphLoaded($event)"
-    (exportRequest)="onExportRequest()">></app-rightbar>
+    (exportRequest)="onExportRequest()">
+  </app-rightbar>
+
   <app-results-pop-up></app-results-pop-up>
+
 </div>

@@ -1,4 +1,3 @@
-
 import {
   Component, Input, Output, EventEmitter,
   AfterViewInit, OnChanges, SimpleChanges,
@@ -6,17 +5,17 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { GainModal } from '../gainmenu/gain-modal.component';
 
 import cytoscape from 'cytoscape';
-import {ParsedGraph} from '../../Models/parsed-graph';
+import { ParsedGraph } from '../../Models/parsed-graph';
 
 type ToolId = 'select' | 'move' | 'add-node' | 'add-branch' | 'set-gain';
 
 @Component({
   selector: 'app-canvas',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, GainModal],
   templateUrl: './canvas.html',
   styleUrls: ['./canvas.css'],
 })
@@ -26,7 +25,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() graph: ParsedGraph = { nodes: [], edges: [], inputNode: '', outputNode: '' };
   @Input() activeTool: ToolId = 'select';
-
+  @Input() pendingGainValue = '0';
   @Output() graphChanged     = new EventEmitter<ParsedGraph>();
   @Output() inputNodeChange  = new EventEmitter<string>();
   @Output() outputNodeChange = new EventEmitter<string>();
@@ -36,30 +35,33 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
   get isEmpty(): boolean { return this.graph.nodes.length === 0; }
   get nodeIds(): string[] { return this.graph.nodes.map(n => n.id); }
 
+  showGainModal    = false;
+  pendingSource2   = '';
+  pendingTarget2   = '';
+  gainModalInitialValue = '1';
+  gainModalMode: 'add-branch' | 'set-gain' = 'add-branch';
+
+  private pendingEdgeId: string | null = null;
+
   private pendingBranchSource: string | null = null;
   private undoStack: ParsedGraph[] = [];
   private redoStack: ParsedGraph[] = [];
   private cy!: cytoscape.Core;
   private nodeCounter = 1;
 
-  // Keyboard handler ref so we can remove it on destroy
   private keydownHandler = (e: KeyboardEvent) => this.onKeydown(e);
 
   constructor(private ngZone: NgZone) {}
 
-  // ── Lifecycle ─────────────────────────────────────────────
   ngAfterViewInit(): void {
     this.ngZone.runOutsideAngular(() => {
       this.initCytoscape();
     });
-    // Listen for Delete / Backspace globally
     document.addEventListener('keydown', this.keydownHandler);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['graph'] && this.cy) {
-      // Only full re-render when graph comes from OUTSIDE (TXT load)
-      // Not when we emit graphChanged ourselves (would cause loop)
       const isExternalChange = changes['graph'].previousValue !== changes['graph'].currentValue;
       if (isExternalChange) {
         this.renderGraph();
@@ -67,7 +69,6 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     }
     if (changes['activeTool'] && this.cy) {
       this.updateCursor();
-      // Clear pending branch when tool changes
       this.clearPendingSource();
     }
   }
@@ -77,9 +78,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     document.removeEventListener('keydown', this.keydownHandler);
   }
 
-  // ── Keyboard Handler ──────────────────────────────────────
   private onKeydown(e: KeyboardEvent): void {
-    // Don't fire if user is typing in an input/textarea
     const tag = (e.target as HTMLElement).tagName.toLowerCase();
     if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
 
@@ -96,25 +95,18 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  // ── Cytoscape Init ────────────────────────────────────────
   private initCytoscape(): void {
     this.cy = cytoscape({
       container: this.cyContainer.nativeElement,
       elements: [],
       style: this.buildStylesheet(),
       layout: { name: 'preset' },
-
-      // ── FIX 4: disable double-tap zoom so clicks are instant ──
       userZoomingEnabled:  true,
       userPanningEnabled:  true,
-      boxSelectionEnabled: false,   // box select causes square artifact
+      boxSelectionEnabled: false,
       selectionType:       'single',
       minZoom: 0.15,
       maxZoom: 4,
-
-      // These two kill the 300ms tap delay completely
-      // Cytoscape checks for double-tap by default; setting this low removes delay
-      // (actual fix is using 'click' event below, not 'tap')
     });
 
     this.cy.on('zoom', () => {
@@ -146,13 +138,11 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
           'width':              44,
           'height':             44,
           'shape':              'ellipse',
-          // ── FIX 3: remove the selection square ──
           'overlay-opacity':    0,
           'overlay-padding':    0,
         } as any,
       },
       {
-        // Selected node: change border color only — NO box/overlay
         selector: 'node:selected',
         style: {
           'border-color':    '#E31BDC',
@@ -200,7 +190,6 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
           'text-background-opacity': 0.9,
           'text-background-padding': '3px',
           'text-rotation':           'autorotate',
-          // ── FIX 3: remove edge selection overlay too ──
           'overlay-opacity':         0,
         } as any,
       },
@@ -227,10 +216,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     ];
   }
 
-  // ── Tool Handlers ─────────────────────────────────────────
   private attachToolHandlers(): void {
-
-    // ── FIX 4: use 'click' instead of 'tap' — zero delay ──
 
     // Click on background
     this.cy.on('click', (evt) => {
@@ -252,20 +238,22 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
       }
     });
 
-    // Click on edge
+    // Click on edge — opens modal instead of prompt()
     this.cy.on('click', 'edge', (evt) => {
       if (this.activeTool === 'set-gain') {
         const currentGain = evt.target.data('gain') as string;
+        const source      = evt.target.data('source') as string;
+        const target      = evt.target.data('target') as string;
         this.ngZone.run(() => {
-          const gain = prompt(`Gain for this branch:`, currentGain || '1');
-          if (gain !== null && gain.trim() !== '') {
-            this.pushUndo();
-            evt.target.data('gain', gain.trim());
-            // Sync to graph model
-            const edge = this.graph.edges.find(e => e.id === evt.target.id());
-            if (edge) edge.gain = gain.trim();
-            this.emitGraphChanged();
-          }
+          this.pendingEdgeId         = evt.target.id();
+          this.pendingSource2        = source;
+          this.pendingTarget2        = target;
+          // Pre-fill: use footer's pending gain if set, otherwise the edge's current gain
+          this.gainModalInitialValue = this.pendingGainValue !== '1'
+            ? this.pendingGainValue
+            : (currentGain || '1');
+          this.gainModalMode         = 'set-gain';
+          this.showGainModal         = true;
         });
       }
     });
@@ -288,22 +276,19 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     };
     container.style.cursor = cursors[this.activeTool] ?? 'default';
 
-    // Allow node dragging only in select/move modes
     if (this.activeTool === 'select' || this.activeTool === 'move') {
       this.cy.nodes().grabify();
       this.cy.panningEnabled(true);
     } else {
       this.cy.nodes().ungrabify();
-      // Keep panning enabled in all modes so user can navigate
       this.cy.panningEnabled(true);
     }
   }
 
-  // ── FIX 2: Add Node — NO fit(), NO renderGraph() ──────────
+  // ── Add Node ──────────────────────────────────────────────
   private addNodeAt(position: { x: number; y: number }): void {
     this.pushUndo();
 
-    // Find next available id (skip if already exists)
     let id = `x${this.nodeCounter}`;
     const existingIds = new Set(this.graph.nodes.map(n => n.id));
     while (existingIds.has(id)) {
@@ -314,7 +299,6 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
 
     const label = id;
 
-    // Add directly to cytoscape — do NOT call renderGraph() or fit()
     this.cy.add({
       group: 'nodes',
       data: { id, label },
@@ -328,28 +312,68 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
   // ── Add Branch ────────────────────────────────────────────
   private handleBranchNodeTap(nodeId: string): void {
     if (!this.pendingBranchSource) {
+      // First node selected — highlight it
       this.pendingBranchSource = nodeId;
       this.cy.$(`#${nodeId}`).addClass('pending-source');
     } else {
-      const source = this.pendingBranchSource;
-      const target = nodeId;
+      // Second node selected — open modal
+      this.pendingSource2 = this.pendingBranchSource;
+      this.pendingTarget2 = nodeId;
       this.clearPendingSource();
 
-      const gain = (prompt(`Gain for branch ${source} → ${target}:`, '1') ?? '').trim() || '1';
+      // Pre-fill with footer's pending gain value
+      this.gainModalInitialValue = this.pendingGainValue || '1';
+      this.gainModalMode         = 'add-branch';
+      this.pendingEdgeId         = null;
+
+      this.ngZone.run(() => { this.showGainModal = true; });
+    }
+  }
+
+  // ── Modal Callbacks ───────────────────────────────────────
+  onGainConfirmed(gain: string): void {
+    this.showGainModal = false;
+
+    if (this.gainModalMode === 'set-gain' && this.pendingEdgeId) {
+      // ── Update existing edge gain ──
       this.pushUndo();
+      const cyEdge = this.cy.$(`#${this.pendingEdgeId}`);
+      cyEdge.data('gain', gain);
+      const edge = this.graph.edges.find(e => e.id === this.pendingEdgeId);
+      if (edge) edge.gain = gain;
+      this.pendingEdgeId = null;
+      this.emitGraphChanged();
 
-      const edgeId  = `e_${source}_${target}_${Date.now()}`;
-      const isSelf  = source === target;
+    } else {
+      // ── Create new edge ──
+      this.pushUndo();
+      const edgeId = `e_${this.pendingSource2}_${this.pendingTarget2}_${Date.now()}`;
+      const isSelf = this.pendingSource2 === this.pendingTarget2;
 
-      // Add directly to cytoscape — no renderGraph()
       this.cy.add({
         group: 'edges',
-        data: { id: edgeId, source, target, gain, selfLoop: isSelf || undefined },
+        data: {
+          id:       edgeId,
+          source:   this.pendingSource2,
+          target:   this.pendingTarget2,
+          gain,
+          selfLoop: isSelf || undefined,
+        },
       });
 
-      this.graph.edges.push({ id: edgeId, from: source, to: target, gain });
+      this.graph.edges.push({
+        id:   edgeId,
+        from: this.pendingSource2,
+        to:   this.pendingTarget2,
+        gain,
+      });
       this.emitGraphChanged();
     }
+  }
+
+  onGainCancelled(): void {
+    this.showGainModal = false;
+    this.pendingEdgeId = null;
   }
 
   private clearPendingSource(): void {
@@ -359,9 +383,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  // ── Render Graph from @Input (TXT load / undo / redo) ────
-  // This is ONLY called when an external graph is pushed in.
-  // It does NOT call fit() so zoom is preserved unless it's the first load.
+  // ── Render Graph ──────────────────────────────────────────
   renderGraph(fitView = false): void {
     if (!this.cy) return;
 
@@ -392,7 +414,6 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     this.markIONodes();
     this.updateCursor();
 
-    // Only fit on first load (when nodes have no saved positions)
     if (fitView || !hasPositions) {
       this.cy.fit(undefined, 60);
     }
@@ -425,14 +446,13 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     this.emitGraphChanged();
   }
 
-  // ── FIX 1: Delete Selected ────────────────────────────────
+  // ── Delete Selected ───────────────────────────────────────
   deleteSelected(): void {
     const selected = this.cy.$(':selected');
     if (selected.length === 0) return;
 
     this.pushUndo();
 
-    // Collect IDs to remove
     const nodeIdsToRemove = new Set<string>();
     const edgeIdsToRemove = new Set<string>();
 
@@ -441,21 +461,17 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
       if (el.isEdge()) edgeIdsToRemove.add(el.id());
     });
 
-    // When a node is removed, also remove all its connected edges
     nodeIdsToRemove.forEach(nid => {
       this.cy.$(`#${nid}`).connectedEdges().forEach(e => {
         edgeIdsToRemove.add(e.id());
       });
     });
 
-    // Remove from cytoscape first (handles connected edges automatically)
     selected.remove();
-    // Also remove dangling edges that were connected to deleted nodes
     edgeIdsToRemove.forEach(eid => {
       this.cy.$(`#${eid}`).remove();
     });
 
-    // Sync graph model
     this.graph.nodes = this.graph.nodes.filter(n => !nodeIdsToRemove.has(n.id));
     this.graph.edges = this.graph.edges.filter(e =>
       !edgeIdsToRemove.has(e.id) &&
@@ -472,14 +488,13 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
 
   private pushUndo(): void {
     this.undoStack.push(this.cloneGraph());
-    this.redoStack = [];           // any new action clears redo
+    this.redoStack = [];
   }
 
   undo(): void {
     if (!this.canUndo) return;
     this.redoStack.push(this.cloneGraph());
     this.graph = this.undoStack.pop()!;
-    // Re-render from graph snapshot — preserve current zoom
     this.renderGraph(false);
     this.emitGraphChanged();
   }
@@ -512,7 +527,6 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
 
   // ── Emit graph state upward ───────────────────────────────
   private emitGraphChanged(): void {
-    // Capture live positions from cytoscape
     this.cy.nodes().forEach(n => {
       const node = this.graph.nodes.find(nd => nd.id === n.id());
       if (node) {
