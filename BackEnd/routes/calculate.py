@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models.graph import build_graph
-
+from models.mason import find_non_touching_loops, compute_delta, compute_delta_k
 calculate_bp = Blueprint("calculate", __name__)
 
 @calculate_bp.route("/calculate", methods=["POST"])
@@ -14,12 +14,25 @@ def calculate():
     forward_paths = find_forward_paths(g)
     loops = find_loops(g)
 
+    non_touching_loops_dict = find_non_touching_loops(loops)
+    delta = compute_delta(loops, non_touching_loops_dict)
+    delta_k = compute_delta_k(forward_paths, loops)
+
+    formatted_non_touching = []
+    for size, combos in non_touching_loops_dict.items():
+        for combo in combos:
+            formatted_non_touching.append({
+                "size": size,
+                "loops_indices": [loop["index"] for loop in combo],
+                "combined_gain": "*".join([loop["gain"] for loop in combo])
+            })
+
     return jsonify({
         "forwardPaths": forward_paths,
         "loops": loops,
-        "nonTouchingLoops": [],
-        "delta": "",
-        "deltaK": [],
+        "nonTouchingLoops": formatted_non_touching,
+        "delta": delta,
+        "deltaK": delta_k,
         "tfSymbolic": ""
     })
 
