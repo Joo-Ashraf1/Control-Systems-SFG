@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models.graph import build_graph
-from models.mason import find_non_touching_loops, compute_delta, compute_delta_k
+from models.mason import find_non_touching_loops, compute_delta, compute_delta_k , mason_rule
 calculate_bp = Blueprint("calculate", __name__)
 
 @calculate_bp.route("/calculate", methods=["POST"])
@@ -18,6 +18,8 @@ def calculate():
     delta = compute_delta(loops, non_touching_loops_dict)
     delta_k = compute_delta_k(forward_paths, loops)
 
+    transfer_function = mason_rule(forward_paths , delta , delta_k)
+
     formatted_non_touching = []
     for size, combos in non_touching_loops_dict.items():
         for combo in combos:
@@ -33,7 +35,7 @@ def calculate():
         "nonTouchingLoops": formatted_non_touching,
         "delta": delta,
         "deltaK": delta_k,
-        "tfSymbolic": ""
+        "tfSymbolic": transfer_function
     })
 
 

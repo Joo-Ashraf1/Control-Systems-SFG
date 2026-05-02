@@ -49,7 +49,7 @@ def compute_delta(loops: list, non_touching_loops: dict) -> str:
         return delta
 
 
-def compute_delta_k(forward_paths: list, loops: list) -> list[Any] | None:
+def compute_delta_k(forward_paths: list, loops: list) -> list[Any] :
     delta_k = []
 
     for path in forward_paths:
@@ -74,3 +74,20 @@ def loops_touch_path(loop: dict, path: dict) -> bool:
     nodes1 = set(loop["nodesPath"])
     nodes2 = set(path["nodesPath"])
     return len(nodes1 & nodes2) > 0
+
+
+def mason_rule(forward_paths : list , delta : str , delta_k : list )  -> str :
+    if( len(forward_paths) == 0 ) : return "0"
+
+    num = []
+    for i , path in enumerate(forward_paths):
+        gain = path["gain"]
+        if delta_k[i] != "1" : gain += f" * ({delta_k[i]})"
+        num.append(gain)
+
+    numerator = " + ".join(num)
+    denumerator = delta
+
+    simplified = sympy.simplify(f"({numerator}) / ({denumerator})")
+
+    return str(simplified)
