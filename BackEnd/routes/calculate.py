@@ -114,5 +114,14 @@ def find_loops(g):
 
 
 def _build_dict(index,forward_paths_gain,path)->dict:
-    dict_path = {"index": index, "gain": forward_paths_gain, "nodesPath": path}
+    evaluated_gain=_clean_gain(forward_paths_gain)
+    dict_path = {"index": index, "gain": evaluated_gain, "nodesPath": path}
     return dict_path
+
+def _clean_gain(gain) -> str:
+    try:
+        return str(eval(gain))
+    except:
+        parts=gain.split("*")
+        parts=[p for p in parts if p.strip()!="1"]
+        return "*".join(parts)
