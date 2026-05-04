@@ -1,0 +1,15 @@
+nodes: y1,y2,y3,y4,y5,y6
+edges:
+y1->y2: 1
+y2->y3: 5
+y3->y4: 10
+y4->y5: 2
+y5->y6: 1
+y2->y6: 10
+y6->y5: 2
+y6->y6: -1
+y4->y3: -1
+y5->y4: -2
+y5->y2: -1
+input: y1
+output: y5

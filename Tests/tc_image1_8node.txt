@@ -1,0 +1,17 @@
+nodes: y1,y2,y3,y4,y5,y6,y7,y8
+edges:
+y1->y2: 1
+y2->y3: G1
+y3->y4: G2
+y4->y5: G3
+y5->y6: G4
+y6->y7: G5
+y7->y8: G6
+y5->y8: G7
+y6->y8: G8
+y7->y6: -H4
+y8->y7: -H1
+y7->y3: -H2
+y8->y2: -H3
+input: y1
+output: y8
