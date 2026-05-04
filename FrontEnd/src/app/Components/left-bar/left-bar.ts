@@ -5,6 +5,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {Results} from '../../Models/results';
@@ -30,14 +31,22 @@ export class LeftBar implements OnChanges {
     delta: false,
   };
 
+  constructor(private cdr: ChangeDetectorRef) {}
+
   toggle(panel: string): void {
     this.open[panel] = !this.open[panel];
+    this.cdr.detectChanges();
   }
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['results'] && this.results) {
-      this.open['tf'] = true; // auto-open TF panel when results arrive
+      // Auto-open TF panel and force change detection so UI updates immediately
+      this.open['tf'] = true;
+      this.cdr.detectChanges();
+    }
+    if (changes['loading']) {
+      this.cdr.detectChanges();
     }
   }
 

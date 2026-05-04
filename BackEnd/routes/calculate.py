@@ -24,9 +24,9 @@ def calculate():
     for size, combos in non_touching_loops_dict.items():
         for combo in combos:
             formatted_non_touching.append({
-                "size": size,
-                "loops_indices": [loop["index"] for loop in combo],
-                "combined_gain": "*".join([loop["gain"] for loop in combo])
+                "order": size,
+                "loops": [loop for loop in combo],
+                "gain": "*".join([loop["gain"] for loop in combo])
             })
 
     return jsonify({

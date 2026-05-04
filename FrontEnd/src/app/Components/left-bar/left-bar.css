@@ -6,6 +6,8 @@
   display: block;
   width: var(--sidebar-width, 260px);
   height: 100%;
+  /* CRITICAL: contain height so it never pushes footer */
+  overflow: hidden;
 }
 
 /* ── Shell ── */
@@ -13,7 +15,9 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  /* FIXED: use 100% of host height, never grow beyond it */
   height: 100%;
+  max-height: 100%;
   background: var(--bg-surface);
   border-right: 1px solid var(--border-subtle);
   overflow: hidden;
@@ -27,6 +31,7 @@
   justify-content: space-between;
   padding: 14px 14px 12px;
   border-bottom: 1px solid var(--border-subtle);
+  /* FIXED: never shrink, always fixed height */
   flex-shrink: 0;
 }
 
@@ -68,8 +73,11 @@
 
 /* ── Scrollable Body ── */
 .sidebar-body {
+  /* FIXED: flex:1 with min-height:0 allows proper scroll containment */
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 12px 12px 20px;
   display: flex;
   flex-direction: column;
@@ -84,6 +92,9 @@
 .sidebar-body::-webkit-scrollbar-thumb {
   background: var(--border-normal);
   border-radius: 4px;
+}
+.sidebar-body::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
 }
 
 /* ── First section (mason + calculate) ── */
@@ -158,6 +169,8 @@
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   background: var(--bg-surface);
+  /* FIXED: prevent accordion from stretching beyond its content */
+  flex-shrink: 0;
 }
 
 .accordion-bar:hover {
@@ -334,7 +347,7 @@
 
 .result-card__gain {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--accent-secondary);
 }
 
@@ -374,7 +387,7 @@
 
 .delta-value {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 15px;
   color: var(--text-secondary);
   word-break: break-all;
   line-height: 1.4;
@@ -420,120 +433,6 @@
   font-size: 11px;
   color: var(--text-muted);
   font-style: italic;
-}
-
-/* ── Gain Substitution section ── */
-.gain-sub-section {
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 8px;
-  margin-top: 2px;
-}
-
-.gain-sub-header {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-}
-
-.gain-sub-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 8px;
-}
-
-/* Each gain row: badge | = | input */
-.gain-sub-row {
-  display: grid;
-  grid-template-columns: 40px 14px 1fr;
-  align-items: center;
-  gap: 6px;
-}
-
-.gain-symbol-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(108, 99, 255, 0.12);
-  border: 1px solid rgba(108, 99, 255, 0.25);
-  border-radius: 4px;
-  padding: 3px 6px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--accent-primary);
-  text-align: center;
-}
-
-.gain-eq {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text-muted);
-  text-align: center;
-}
-
-.gain-sub-input {
-  height: 28px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-normal);
-  border-radius: 4px;
-  padding: 0 8px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-primary);
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.gain-sub-input:focus {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.1);
-}
-
-.gain-sub-input::placeholder {
-  color: var(--text-muted);
-  font-size: 10px;
-}
-
-/* S= evaluation row */
-.gain-sub-actions {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.freq-input {
-  flex: 1;
-  height: 28px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-normal);
-  border-radius: 4px;
-  padding: 0 8px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-primary);
-  outline: none;
-  min-width: 0;
-  transition: border-color 0.15s ease;
-}
-
-.freq-input:focus { border-color: var(--accent-primary); }
-.freq-input::placeholder { color: var(--text-muted); font-size: 10px; }
-
-.btn--sm {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 5px 10px;
-  font-size: 11px;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 
 /* ── Empty State ── */

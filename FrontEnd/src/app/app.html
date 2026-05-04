@@ -1,24 +1,5 @@
 <div class="app-shell">
 
-  <!-- Dynamic Error Window -->
-  @if (currentErrors.length > 0) {
-    <div class="dynamic-errors-window">
-      <div class="dynamic-errors-header">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/>
-          <line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-        Graph Warnings ({{ currentErrors.length }})
-      </div>
-      <ul class="dynamic-errors-list">
-        @for (err of currentErrors; track $index) {
-          <li>{{ err }}</li>
-        }
-      </ul>
-    </div>
-  }
-
   <!-- Large Calculation Error Modal -->
   @if (showErrorModal) {
     <div class="error-modal-backdrop">
@@ -51,6 +32,31 @@
   </app-left-bar>
 
   <div class="app-main">
+    <!-- Graph Warnings Toast — top-left of canvas, dismissable -->
+    @if (currentErrors.length > 0 && !warningsDismissed) {
+      <div class="dynamic-errors-window">
+        <div class="dynamic-errors-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span class="dynamic-errors-header__text">Warnings ({{ currentErrors.length }})</span>
+          <button class="dynamic-errors-close" (click)="dismissWarnings()" title="Dismiss">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="dynamic-errors-list">
+          @for (err of currentErrors; track $index) {
+            <li>{{ err }}</li>
+          }
+        </ul>
+      </div>
+    }
+
     <app-canvas
       #canvasRef
       [graph]="graph"
@@ -83,3 +89,4 @@
   <app-results-pop-up></app-results-pop-up>
 
 </div>
+

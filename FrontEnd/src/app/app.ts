@@ -1,4 +1,4 @@
-import { Component, signal, ViewChild } from '@angular/core';
+import { Component, signal, ViewChild, ChangeDetectorRef, NgZone } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NgIf, NgFor } from '@angular/common';
 import { LeftBar } from './Components/left-bar/left-bar';
@@ -29,6 +29,8 @@ export class App {
 
   currentErrors: string[] = [];
   showErrorModal = false;
+  warningsDismissed = false;
+  private warningsTimer: any = null;
 
   // Canvas / toolbar state
   activeTool: ToolId = 'select';
@@ -37,10 +39,24 @@ export class App {
 
   @ViewChild('canvasRef') canvasRef!: Canvas;
 
-  constructor(private parsing: Parsing, private api: API, private validation: GraphValidationService) {}
+  constructor(
+    private parsing: Parsing,
+    private api: API,
+    private validation: GraphValidationService,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
+  ) {}
 
   closeErrorModal(): void {
     this.showErrorModal = false;
+  }
+
+  dismissWarnings(): void {
+    this.warningsDismissed = true;
+    if (this.warningsTimer) {
+      clearTimeout(this.warningsTimer);
+      this.warningsTimer = null;
+    }
   }
 
   onCalculate(): void {
@@ -55,14 +71,20 @@ export class App {
 
     this.api.calculate(this.graph).subscribe({
       next: (res) => {
-        this.result = res;
-        this.isCalculating = false;
+        this.ngZone.run(() => {
+          this.result = res;
+          this.isCalculating = false;
+          this.cdr.detectChanges();
+        });
       },
       error: (err) => {
-        this.isCalculating = false;
-        this.calculateError = err.message || 'Calculation failed';
-        alert(`Error: ${this.calculateError}`);
-        console.error('API Error:', err);
+        this.ngZone.run(() => {
+          this.isCalculating = false;
+          this.calculateError = err.message || 'Calculation failed';
+          alert(`Error: ${this.calculateError}`);
+          console.error('API Error:', err);
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -73,6 +95,8 @@ export class App {
     this.result = null;
     this.selectedItem = null;
     this.currentErrors = this.validation.validateGraph(this.graph);
+    this.warningsDismissed = false;
+    this.startWarningsAutoHide();
   }
 
   /** Delegate PNG export to canvas component */
@@ -87,7 +111,25 @@ export class App {
   onGraphChanged(graph: ParsedGraph): void {
     this.graph  = graph;
     this.result = null;
-    this.currentErrors = this.validation.validateGraph(this.graph);
+    const newErrors = this.validation.validateGraph(this.graph);
+    // Reset dismissed state when errors change
+    if (JSON.stringify(newErrors) !== JSON.stringify(this.currentErrors)) {
+      this.warningsDismissed = false;
+      this.startWarningsAutoHide();
+    }
+    this.currentErrors = newErrors;
+  }
+
+  private startWarningsAutoHide(): void {
+    if (this.warningsTimer) {
+      clearTimeout(this.warningsTimer);
+    }
+    this.warningsTimer = setTimeout(() => {
+      this.ngZone.run(() => {
+        this.warningsDismissed = true;
+        this.cdr.detectChanges();
+      });
+    }, 5000);
   }
 
   onSelectionChanged(item: any): void {
