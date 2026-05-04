@@ -1,0 +1,22 @@
+nodes: x1,x2,x3,x4,x5,x6,x7,x8
+edges:
+x1->x2: 1
+x2->x3: G1
+x3->x4: G2
+x4->x5: G3
+x5->x6: G4
+x6->x7: G5
+x7->x8: G6
+x3->x5: G7
+x5->x7: G8
+x2->x6: G9
+x7->x6: -H1
+x6->x5: -H2
+x5->x3: -H3
+x4->x2: -H4
+x7->x2: -H5
+x3->x3: L1
+x5->x5: L2
+x7->x7: L3
+input: x1
+output: x8
