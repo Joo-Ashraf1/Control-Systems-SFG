@@ -1,7 +1,7 @@
 <div class="modal-backdrop" *ngIf="visible" (click)="onCancel()">
   <div class="modal-box" (click)="$event.stopPropagation()">
 
-    <!-- Icon -->
+    
     <div class="modal-icon">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
            stroke="#00f5ff" stroke-width="2">
@@ -10,17 +10,17 @@
       </svg>
     </div>
 
-    <!-- Title -->
+    
     <p class="modal-title">{{ modalTitle }}</p>
 
-    <!-- Branch label -->
+    
     <p class="branch-label">
       <span class="node-tag">{{ sourceNode }}</span>
       <span class="arrow-sep">→</span>
       <span class="node-tag">{{ targetNode }}</span>
     </p>
 
-    <!-- Input -->
+    
     <label class="input-label">Gain Value</label>
     <input
       class="gain-input-field"
@@ -29,7 +29,7 @@
       placeholder="e.g. G1, -1, 1/s, 0.5"
       autofocus/>
 
-    <!-- Quick presets -->
+    
     <div class="hint-row">
       <span class="hint-chip" (click)="setQuick('1')">1</span>
       <span class="hint-chip" (click)="setQuick('-1')">-1</span>
@@ -41,7 +41,7 @@
 
     <div class="divider-line"></div>
 
-    <!-- Buttons -->
+    
     <div class="btn-row">
       <button class="btn-cancel" (click)="onCancel()">Cancel</button>
       <button class="btn-ok" (click)="onConfirm()">{{ confirmLabel }}</button>

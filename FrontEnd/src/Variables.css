@@ -1,65 +1,61 @@
-/* ============================================
-   SFG Global Variables & Base Styles
-   Aesthetic: Technical / Engineering Dark Theme
-   Font: JetBrains Mono + Syne
-   ============================================ */
+
 
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 
 :root {
-  /* Core Palette — Light Mode */
+  
   --bg-base:        #f0f2f8;
   --bg-surface:     #ffffff;
   --bg-elevated:    #f7f8fc;
   --bg-hover:       #eef0f8;
   --bg-active:      #e8eaf5;
 
-  /* Accent Colors */
+  
   --accent-primary:   #6c63ff;
   --accent-secondary: #00b894;
   --accent-warn:      #e55353;
   --accent-gold:      #d4890a;
 
-  /* Text */
+  
   --text-primary:   #1a1d2e;
   --text-secondary: #4a5068;
   --text-muted:     #9aa0b8;
   --text-accent:    #6c63ff;
 
-  /* Borders */
+  
   --border-subtle:  rgba(0,0,0,0.07);
   --border-normal:  rgba(0,0,0,0.12);
   --border-strong:  rgba(108,99,255,0.35);
 
-  /* Node Colors (canvas nodes stay dark per screenshot) */
+  
   --node-fill:      #1a1d2e;
   --node-stroke:    #6c63ff;
   --node-text:      #ffffff;
   --edge-color:     #6c63ff;
   --edge-feedback:  #00b894;
 
-  /* Shadows */
+  
   --shadow-sm:  0 1px 4px rgba(0,0,0,0.08);
   --shadow-md:  0 4px 16px rgba(0,0,0,0.10);
   --shadow-lg:  0 8px 32px rgba(0,0,0,0.13);
   --glow:       0 0 16px rgba(108,99,255,0.18);
 
-  /* Layout */
+  
   --sidebar-width:     280px;
   --right-sidebar-width: 240px;
   --footer-height:     72px;
   --header-height:     48px;
 
-  /* Typography */
+  
   --font-display: 'Syne', sans-serif;
   --font-mono:    'JetBrains Mono', monospace;
 
-  /* Radius */
+  
   --radius-sm:  6px;
   --radius-md:  10px;
   --radius-lg:  16px;
 
-  /* Transitions */
+  
   --transition: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -80,7 +76,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar */
+
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
@@ -89,7 +85,7 @@ html, body {
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
 
-/* Utility Classes */
+
 .section-title {
   font-family: var(--font-display);
   font-size: 11px;
@@ -143,7 +139,7 @@ html, body {
   margin: 12px 0;
 }
 
-/* Shared Button Styles */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -225,7 +221,7 @@ html, body {
   pointer-events: none;
 }
 
-/* Shared card */
+
 .card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -234,7 +230,7 @@ html, body {
   box-shadow: var(--shadow-sm);
 }
 
-/* Empty state */
+
 .empty-state {
   font-size: 11px;
   color: var(--text-muted);

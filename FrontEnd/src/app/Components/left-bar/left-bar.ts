@@ -22,7 +22,7 @@ export class LeftBar implements OnChanges {
   @Input() results: Results | null = null;
   @Input() loading = false;
 
-  // ── Accordion state ───────────────────────────────────────────────────────
+  
   open: Record<string, boolean> = {
     tf: false,
     paths: false,
@@ -38,10 +38,10 @@ export class LeftBar implements OnChanges {
     this.cdr.detectChanges();
   }
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['results'] && this.results) {
-      // Auto-open TF panel and force change detection so UI updates immediately
+      
       this.open['tf'] = true;
       this.cdr.detectChanges();
     }
@@ -50,12 +50,12 @@ export class LeftBar implements OnChanges {
     }
   }
 
-  // ── Actions ───────────────────────────────────────────────────────────────
+  
   onCalculate(): void {
     this.calculateRequested.emit();
   }
 
-  // ── Template helpers ──────────────────────────────────────────────────────
+  
   formatPath(nodes: string[]): string {
     return nodes.join(' → ');
   }

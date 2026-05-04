@@ -91,13 +91,13 @@ export class Rightbar implements OnChanges {
     if (this.result)      return 'Analysis complete';
     return 'Ready to calculate';
   }
-  //File loading logic
+  
     onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file  = input.files?.[0];
     if (!file) return;
  
-    // Reset previous state
+    
     this.parseErrors  = [];
     this.parseSuccess = false;
  
@@ -121,16 +121,16 @@ export class Rightbar implements OnChanges {
     };
  
     reader.readAsText(file);
-    // Reset so the same file can be re-loaded if needed
+    
     input.value = '';
   }
  
-  /** Trigger the hidden file input */
+  
   openFilePicker(inputEl: HTMLInputElement): void {
     inputEl.click();
   }
  
-  // ── Export ────────────────────────────────────────────────
+  
   onExport(): void {
     this.exportRequest.emit();
   }

@@ -1,6 +1,4 @@
-/* ============================================
-   footer-toolbar.component.css
-   ============================================ */
+
 
 :host {
   display: block;
@@ -23,7 +21,7 @@
 
 .footer-toolbar::-webkit-scrollbar { height: 0; }
 
-/* ── Tool Groups ── */
+
 .toolbar-group {
   display: flex;
   align-items: center;
@@ -31,7 +29,7 @@
   flex-shrink: 0;
 }
 
-/* ── Tool Buttons ── */
+
 .tool-btn {
   display: flex;
   flex-direction: column;
@@ -98,7 +96,7 @@
   white-space: nowrap;
 }
 
-/* ── Separators ── */
+
 .toolbar-separator {
   width: 1px;
   height: 36px;
@@ -111,7 +109,7 @@
   margin-left: auto;
 }
 
-/* ── Gain Input Group ── */
+
 .gain-input-group {
   display: flex;
   align-items: center;

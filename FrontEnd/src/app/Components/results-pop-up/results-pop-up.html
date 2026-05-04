@@ -1,10 +1,10 @@
-<!-- results-popup.component.html -->
-<!-- Transfer Function Calculator & Full Results Modal -->
+
+
 
 <div class="popup-backdrop" id="popupBackdrop" >
   <div class="popup-container" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
 
-    <!-- Popup Header -->
+    
     <div class="popup-header">
       <div class="popup-header__left">
         <div class="popup-header__icon">
@@ -24,10 +24,10 @@
       </button>
     </div>
 
-    <!-- Popup Body -->
+    
     <div class="popup-body">
 
-      <!-- Left Column: Gain Assignments -->
+      
       <div class="popup-col popup-col--inputs">
 
         <div class="col-header">
@@ -35,7 +35,7 @@
           <span class="col-subtitle">Map symbols → numeric values</span>
         </div>
 
-        <!-- Note about s-domain -->
+        
         <div class="sdomain-note">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <circle cx="12" cy="12" r="10"/>
@@ -45,28 +45,20 @@
           Values can include <code>s</code> (e.g. <code>1/s</code>, <code>s+2</code>)
         </div>
 
-        <!-- Gain Rows (rendered dynamically via TS) -->
+        
         <div class="gain-rows" id="gainRows">
-          <!-- Example structure for reference; real rows created in TS:
-          <div class="gain-row">
-            <div class="gain-row__symbol">
-              <span class="gain-symbol-badge">G1</span>
-            </div>
-            <span class="gain-row__eq">=</span>
-            <input class="gain-row__input" type="text" placeholder="e.g. 10 or 1/(s+2)" />
-          </div>
-          -->
+          
           <p class="empty-gains" id="emptyGainsMsg">No symbolic gains detected. Draw branches with gains like G1, H2...</p>
         </div>
 
-        <!-- Frequency input -->
+        
         <div class="frequency-block">
           <label class="freq-label">Evaluate at s =</label>
           <input class="freq-input" id="sValueInput" type="text" placeholder="e.g. 2j or leave empty for symbolic"/>
           <span class="freq-hint">optional</span>
         </div>
 
-        <!-- Calculate button -->
+        
         <button class="btn btn--primary calculate-main-btn" id="popupCalculateBtn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <polygon points="5 3 19 12 5 21 5 3"/>
@@ -76,10 +68,10 @@
 
       </div>
 
-      <!-- Divider -->
+      
       <div class="popup-col-divider"></div>
 
-      <!-- Right Column: Results -->
+      
       <div class="popup-col popup-col--results">
 
         <div class="col-header">
@@ -87,7 +79,7 @@
           <span class="col-subtitle">Full Mason's formula breakdown</span>
         </div>
 
-        <!-- Transfer Function Result (hero) -->
+        
         <div class="tf-hero" id="tfHero">
           <div class="tf-hero__label">T(s) =</div>
           <div class="tf-hero__value" id="tfHeroValue">
@@ -95,7 +87,7 @@
           </div>
         </div>
 
-        <!-- Results Tabs -->
+        
         <div class="results-tabs">
           <button class="results-tab active" data-tab="paths" id="tabPaths">Forward Paths</button>
           <button class="results-tab" data-tab="loops" id="tabLoops">Loops</button>
@@ -103,35 +95,35 @@
           <button class="results-tab" data-tab="nontouching" id="tabNonTouching">Non-touching</button>
         </div>
 
-        <!-- Tab Content -->
+        
         <div class="tab-content" id="tabContent">
 
-          <!-- Forward Paths Tab -->
+          
           <div class="tab-panel active" id="panelPaths">
             <div class="results-scroll" id="pathsResultList">
               <p class="empty-state">No results yet</p>
             </div>
           </div>
 
-          <!-- Loops Tab -->
+          
           <div class="tab-panel" id="panelLoops">
             <div class="results-scroll" id="loopsResultList">
               <p class="empty-state">No results yet</p>
             </div>
           </div>
 
-          <!-- Delta Tab -->
+          
           <div class="tab-panel" id="panelDelta">
             <div class="delta-breakdown" id="deltaBreakdown">
               <div class="delta-entry">
                 <span class="delta-entry__key">Δ =</span>
                 <span class="delta-entry__val" id="deltaResultMain">—</span>
               </div>
-              <!-- Δk entries rendered dynamically -->
+              
             </div>
           </div>
 
-          <!-- Non-touching Tab -->
+          
           <div class="tab-panel" id="panelNonTouching">
             <div class="results-scroll" id="nonTouchingResultList">
               <p class="empty-state">No results yet</p>
@@ -143,7 +135,7 @@
       </div>
     </div>
 
-    <!-- Popup Footer -->
+    
     <div class="popup-footer">
       <div class="popup-footer__info" id="calcStatus">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

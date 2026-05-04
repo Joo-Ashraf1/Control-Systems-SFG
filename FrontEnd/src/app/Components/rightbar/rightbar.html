@@ -1,7 +1,7 @@
-<!-- right-sidebar.component.html -->
+
 <aside class="right-sidebar">
 
-  <!-- Current Graph Info -->
+  
   <section class="sidebar-section">
     <div class="section-header">
       <div class="section-icon-box">
@@ -37,7 +37,7 @@
 
   <div class="divider"></div>
 
-  <!-- File Operations -->
+  
   <section class="sidebar-section">
     <div class="section-header">
       <div class="section-icon-box">
@@ -50,7 +50,7 @@
     </div>
 
     <div class="file-ops">
-      <!-- Hidden file input -->
+      
       <input
         #txtFileInput
         type="file"
@@ -58,7 +58,7 @@
         style="display:none"
         (change)="onFileSelected($event)"/>
 
-      <!-- Load TXT -->
+      
       <button class="file-btn" (click)="openFilePicker(txtFileInput)">
         <div class="file-btn__icon file-btn__icon--load">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -76,7 +76,7 @@
         </svg>
       </button>
 
-      <!-- Export Image -->
+      
       <button class="file-btn" (click)="onExport()">
         <div class="file-btn__icon file-btn__icon--export">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -95,7 +95,7 @@
       </button>
     </div>
 
-    <!-- Parse success banner -->
+    
     <div class="parse-banner parse-banner--success" *ngIf="parseSuccess">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <polyline points="20 6 9 17 4 12"/>
@@ -103,7 +103,7 @@
       Graph loaded successfully!
     </div>
 
-    <!-- Parse error list -->
+    
     <div class="parse-banner parse-banner--error" *ngIf="parseErrors.length > 0">
       <div class="parse-banner__header">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -119,7 +119,7 @@
       </ul>
     </div>
 
-    <!-- TXT Format hint -->
+    
     <div class="format-hint">
       <div class="hint-header">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -142,7 +142,7 @@ output: x4</pre>
 
   <div class="divider"></div>
 
-  <!-- Selection Details -->
+  
   <section class="sidebar-section">
     <div class="section-header">
       <div class="section-icon-box">
@@ -213,7 +213,7 @@ output: x4</pre>
 
   <div class="divider"></div>
 
-  <!-- Status -->
+  
   <section class="sidebar-section">
     <div class="status-indicator" [ngClass]="statusClass">
       <span class="status-dot"></span>

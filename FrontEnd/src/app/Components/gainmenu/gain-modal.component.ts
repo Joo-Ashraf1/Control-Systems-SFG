@@ -22,7 +22,7 @@ export class GainModal implements OnChanges {
   gainValue = '1';
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Every time the modal opens, reset gainValue to the initialValue
+    
     if (changes['visible'] && this.visible) {
       this.gainValue = this.initialValue || '1';
     }

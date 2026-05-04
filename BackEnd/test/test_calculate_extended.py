@@ -26,9 +26,9 @@ def sym_equal(expr1: str, expr2: str) -> bool:
         return False
 
 
-# ─────────────────────────────────────────────
-# Transfer Function Correctness
-# ─────────────────────────────────────────────
+
+
+
 
 def test_tf_simple_gain(client):
     payload = {
@@ -118,9 +118,9 @@ def test_tf_two_paths_with_shared_loop(client):
     assert sym_equal(data["tfSymbolic"], "(a*c + b*d*(1-L)) / (1-L)")
 
 
-# ─────────────────────────────────────────────
-# Loop Gain / Delta Correctness
-# ─────────────────────────────────────────────
+
+
+
 
 def test_delta_one_loop(client):
     payload = {
@@ -191,9 +191,9 @@ def test_loop_count_is_correct(client):
     assert len(data["loops"]) == 3
 
 
-# ─────────────────────────────────────────────
-# Complex Graphs (longer paths, more nodes)
-# ─────────────────────────────────────────────
+
+
+
 
 def test_long_chain_five_nodes(client):
     payload = {
@@ -271,9 +271,9 @@ def test_complex_graph_three_loops(client):
     assert sym_equal(data["delta"], expected_delta)
 
 
-# ─────────────────────────────────────────────
-# Stress Tests
-# ─────────────────────────────────────────────
+
+
+
 
 def test_stress_long_chain_ten_nodes(client):
     n = 10
@@ -299,7 +299,7 @@ def test_stress_many_self_loops(client):
         {"from": f"x{i}", "to": f"x{i+1}", "gain": f"g{i}", "id": f"e{i}"}
         for i in range(1, n)
     ]
-    # add self-loops on every intermediate node
+    
     for i in range(2, n):
         edges.append({"from": f"x{i}", "to": f"x{i}", "gain": f"L{i}", "id": f"sl{i}"})
 
@@ -308,7 +308,7 @@ def test_stress_many_self_loops(client):
     data = res.get_json()
 
     assert res.status_code == 200
-    assert len(data["loops"]) == n - 2   # self-loops on x2..x(n-1)
+    assert len(data["loops"]) == n - 2   
     assert data["tfSymbolic"] != "0"
 
 
@@ -345,12 +345,12 @@ def test_stress_response_time(client):
     elapsed = time.time() - start
 
     assert res.status_code == 200
-    assert elapsed < 10  # must respond within 10 seconds
+    assert elapsed < 10  
 
 
-# ─────────────────────────────────────────────
-# Helper
-# ─────────────────────────────────────────────
+
+
+
 
 def res_ok(data: dict) -> bool:
     return all(k in data for k in ["forwardPaths", "loops", "delta", "tfSymbolic"])

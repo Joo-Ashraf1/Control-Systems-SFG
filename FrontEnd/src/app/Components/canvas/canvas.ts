@@ -118,8 +118,8 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     this.attachToolHandlers();
   }
 
-  // ── Cytoscape Stylesheet ──────────────────────────────────
-  // @ts-ignore
+  
+  
   private buildStylesheet(): cytoscape.Stylesheet[] {
     return [
       {
@@ -218,7 +218,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
 
   private attachToolHandlers(): void {
 
-    // Click on background
+    
     this.cy.on('click', (evt) => {
       if (evt.target !== this.cy) return;
 
@@ -230,7 +230,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
       }
     });
 
-    // Click on node
+    
     this.cy.on('click', 'node', (evt) => {
       const nodeId = evt.target.id() as string;
       if (this.activeTool === 'add-branch') {
@@ -238,7 +238,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
       }
     });
 
-    // Click on edge — opens modal instead of prompt()
+    
     this.cy.on('click', 'edge', (evt) => {
       if (this.activeTool === 'add-branch') {
         const currentGain = evt.target.data('gain') as string;
@@ -248,7 +248,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
           this.pendingEdgeId         = evt.target.id();
           this.pendingSource2        = source;
           this.pendingTarget2        = target;
-          // Pre-fill: use edge's current gain or 1
+          
           this.gainModalInitialValue = currentGain || '1';
           this.gainModalMode         = 'set-gain';
           this.showGainModal         = true;
@@ -256,12 +256,12 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
       }
     });
 
-    // Selection events
+    
     this.cy.on('select unselect', 'node, edge', () => {
       this.ngZone.run(() => this.emitSelection());
     });
 
-    // Sync positions after drag
+    
     this.cy.on('dragfree', 'node', () => {
       this.ngZone.run(() => {
         this.emitGraphChanged();
@@ -290,7 +290,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  // ── Add Node ──────────────────────────────────────────────
+  
   private addNodeAt(position: { x: number; y: number }): void {
     this.pushUndo();
 
@@ -314,19 +314,19 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     this.emitGraphChanged();
   }
 
-  // ── Add Branch ────────────────────────────────────────────
+  
   private handleBranchNodeTap(nodeId: string): void {
     if (!this.pendingBranchSource) {
-      // First node selected — highlight it
+      
       this.pendingBranchSource = nodeId;
       this.cy.$(`#${nodeId}`).addClass('pending-source');
     } else {
-      // Second node selected — open modal
+      
       this.pendingSource2 = this.pendingBranchSource;
       this.pendingTarget2 = nodeId;
       this.clearPendingSource();
 
-      // Pre-fill with default 1
+      
       this.gainModalInitialValue = '1';
       this.gainModalMode         = 'add-branch';
       this.pendingEdgeId         = null;
@@ -335,11 +335,11 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  // ── Modal Callbacks ───────────────────────────────────────
+  
   onGainConfirmed(gain: string): void {
     this.showGainModal = false;
 
-    // Zero Gain Block
+    
     const numGain = parseFloat(gain);
     if (gain === '0' || numGain === 0) {
       alert('Zero Gain Block: A branch with gain 0 is mathematically equivalent to no connection and is rejected.');
@@ -348,7 +348,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     if (this.gainModalMode === 'set-gain' && this.pendingEdgeId) {
-      // ── Update existing edge gain ──
+      
       this.pushUndo();
       const cyEdge = this.cy.$(`#${this.pendingEdgeId}`);
       cyEdge.data('gain', gain);
@@ -359,12 +359,12 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
       this.emitSelection();
 
     } else {
-      // ── Create new edge or merge parallel ──
+      
       const existingEdge = this.graph.edges.find(e => e.from === this.pendingSource2 && e.to === this.pendingTarget2);
       
       if (existingEdge) {
         this.pushUndo();
-        // Sum parallel branches
+        
         const newGain = `(${existingEdge.gain}) + (${gain})`;
         existingEdge.gain = newGain;
         this.cy.$(`#${existingEdge.id}`).data('gain', newGain);
@@ -410,7 +410,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  // ── Render Graph ──────────────────────────────────────────
+  
   renderGraph(fitView = false): void {
     if (!this.cy) return;
 
@@ -451,14 +451,14 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     }), 0) + 1;
   }
 
-  // ── Mark Input / Output Nodes ─────────────────────────────
+  
   private markIONodes(): void {
     this.cy.nodes().removeClass('input-node output-node');
     if (this.graph.inputNode)  this.cy.$(`#${this.graph.inputNode}`).addClass('input-node');
     if (this.graph.outputNode) this.cy.$(`#${this.graph.outputNode}`).addClass('output-node');
   }
 
-  // ── I/O Dropdowns ─────────────────────────────────────────
+  
   onInputNodeChange(id: string): void {
     this.graph.inputNode = id;
     this.markIONodes();
@@ -473,7 +473,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     this.emitGraphChanged();
   }
 
-  // ── Delete Selected ───────────────────────────────────────
+  
   deleteSelected(): void {
     const selected = this.cy.$(':selected');
     if (selected.length === 0) return;
@@ -509,7 +509,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     this.emitGraphChanged();
   }
 
-  // ── Undo / Redo ───────────────────────────────────────────
+  
   get canUndo(): boolean { return this.undoStack.length > 0; }
   get canRedo(): boolean { return this.redoStack.length > 0; }
 
@@ -540,12 +540,12 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     return JSON.parse(JSON.stringify(this.graph));
   }
 
-  // ── Zoom Controls ─────────────────────────────────────────
+  
   zoomIn():      void { this.cy.zoom({ level: this.cy.zoom() * 1.2, renderedPosition: { x: this.cy.width() / 2, y: this.cy.height() / 2 } }); }
   zoomOut():     void { this.cy.zoom({ level: this.cy.zoom() / 1.2, renderedPosition: { x: this.cy.width() / 2, y: this.cy.height() / 2 } }); }
   fitToScreen(): void { this.cy.fit(undefined, 60); }
 
-  // ── Export PNG ────────────────────────────────────────────
+  
   exportAsPng(): void {
     const png64 = this.cy.png({ full: true, scale: 2, bg: '#f0f2f8' });
     const link  = document.createElement('a');
@@ -554,7 +554,7 @@ export class Canvas implements AfterViewInit, OnChanges, OnDestroy {
     link.click();
   }
 
-  // ── Emit graph state upward ───────────────────────────────
+  
   private emitGraphChanged(): void {
     this.cy.nodes().forEach(n => {
       const node = this.graph.nodes.find(nd => nd.id === n.id());

@@ -1,6 +1,4 @@
-/* ============================================
-   canvas.component.css
-   ============================================ */
+
 
 :host {
   display: flex;
@@ -20,7 +18,7 @@
   overflow: hidden;
 }
 
-/* ── Topbar ── */
+
 .canvas-topbar {
   display: flex;
   align-items: center;
@@ -61,7 +59,7 @@
   flex-shrink: 0;
 }
 
-/* ── I/O Assignment ── */
+
 .io-assign {
   display: flex;
   align-items: center;
@@ -110,7 +108,7 @@
   font-weight: 600;
 }
 
-/* ── Zoom Controls ── */
+
 .zoom-controls {
   display: flex;
   align-items: center;
@@ -150,7 +148,7 @@
   padding: 0 2px;
 }
 
-/* ── Canvas Area ── */
+
 .canvas-area {
   position: relative;
   flex: 1;
@@ -158,7 +156,7 @@
   background: var(--bg-base);
 }
 
-/* Dot Grid - light mode */
+
 .canvas-grid {
   position: absolute;
   inset: 0;
@@ -169,17 +167,17 @@
   z-index: 0;
 }
 
-/* Cytoscape container */
+
 .cy-container {
   position: absolute;
   inset: 0;
   z-index: 1;
 }
 
-/* Cytoscape node/edge shared overrides exposed via CSS vars */
-/* (actual Cytoscape styles go in the TS component) */
 
-/* ── Empty State Overlay ── */
+
+
+
 .canvas-empty {
   position: absolute;
   inset: 0;
@@ -251,7 +249,7 @@ kbd {
   box-shadow: var(--shadow-sm);
 }
 
-/* ── Selection Box (rubber-band) ── */
+
 .canvas-selection-box {
   position: absolute;
   border: 1.5px dashed var(--accent-primary);

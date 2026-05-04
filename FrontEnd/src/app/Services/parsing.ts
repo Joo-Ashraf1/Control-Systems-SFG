@@ -6,15 +6,15 @@ import { ParsedGraph } from '../Models/parsed-graph';
   providedIn: 'root',
 })
 export class Parsing {
-  //  Expected TXT format:
-  //    nodes: x1,x2,x3,x4
-  //    edges:
-  //    x1->x2: G1
-  //    x2->x3: G2
-  //    x3->x4: G3
-  //    x3->x2: -H1
-  //    input: x1
-  //    output: x4
+  
+  
+  
+  
+  
+  
+  
+  
+  
   parseTxtFile(content:string): TxtParseResult {
     const errors: string[] = [];
     const graph: ParsedGraph = { 
@@ -24,12 +24,12 @@ export class Parsing {
       outputNode: '' };
       const lines=content.split('\n')
       .map(line=>line.trim())
-      .filter(line=>line.length>0 && !line.startsWith('//')); // ignore empty and comment lines
+      .filter(line=>line.length>0 && !line.startsWith('//')); 
       let inEdgesSection=false;
       for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
  
-      // ── nodes: x1,x2,x3,x4
+      
       if (line.toLowerCase().startsWith('nodes:')) {
         const raw = line.slice('nodes:'.length).trim();
         if (!raw) {
@@ -42,27 +42,27 @@ export class Parsing {
         continue;
       }
  
-      // ── edges:  (section marker)
+      
       if (line.toLowerCase() === 'edges:') {
         inEdgesSection = true;
         continue;
       }
  
-      // ── input: x1
+      
       if (line.toLowerCase().startsWith('input:')) {
         graph.inputNode = line.slice('input:'.length).trim();
         inEdgesSection = false;
         continue;
       }
  
-      // ── output: x4
+      
       if (line.toLowerCase().startsWith('output:')) {
         graph.outputNode = line.slice('output:'.length).trim();
         inEdgesSection = false;
         continue;
       }
  
-      // ── edge line: x1->x2: G1
+      
       if (inEdgesSection) {
         if (!line.includes('->')) {
           errors.push(`Line ${i + 1}: Expected edge format "from->to: gain", got "${line}"`);
@@ -95,11 +95,11 @@ export class Parsing {
         continue;
       }
  
-      // Unknown line
+      
       errors.push(`Line ${i + 1}: Unrecognized line "${line}"`);
     }
  
-    // ── Semantic validation ──
+    
     if (graph.nodes.length === 0) {
       errors.push('No nodes defined. Add a "nodes:" line.');
     }

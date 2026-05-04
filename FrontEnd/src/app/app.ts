@@ -32,7 +32,7 @@ export class App {
   warningsDismissed = false;
   private warningsTimer: any = null;
 
-  // Canvas / toolbar state
+  
   activeTool: ToolId = 'select';
   isCalculating = false;
   calculateError = '';
@@ -89,7 +89,7 @@ export class App {
     });
   }
 
-  /** Called when right-sidebar successfully parses a TXT file. */
+  
   onGraphLoaded(graph: ParsedGraph): void {
     this.graph  = graph;
     this.result = null;
@@ -99,20 +99,17 @@ export class App {
     this.startWarningsAutoHide();
   }
 
-  /** Delegate PNG export to canvas component */
+  
   onExportRequest(): void {
     this.canvasRef?.exportAsPng();
   }
 
-  /**
-   * Canvas emits this whenever nodes/edges change (add, move, delete).
-   * Keep app.graph in sync so the backend receives the latest graph.
-   */
+  
   onGraphChanged(graph: ParsedGraph): void {
     this.graph  = graph;
     this.result = null;
     const newErrors = this.validation.validateGraph(this.graph);
-    // Reset dismissed state when errors change
+    
     if (JSON.stringify(newErrors) !== JSON.stringify(this.currentErrors)) {
       this.warningsDismissed = false;
       this.startWarningsAutoHide();

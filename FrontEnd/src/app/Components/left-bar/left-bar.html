@@ -1,7 +1,7 @@
-<!-- left-bar.component.html -->
+
 <aside class="left-sidebar">
 
-  <!-- ── Header ── -->
+  
   <div class="sidebar-header">
     <div class="sidebar-logo">
       <svg class="logo-icon" viewBox="0 0 28 28" fill="none">
@@ -18,10 +18,10 @@
     </div>
   </div>
 
-  <!-- ── Scrollable Body ── -->
+  
   <div class="sidebar-body">
 
-    <!-- ════ Calculate Bar ════ -->
+    
     <div class="sidebar-section">
       <div class="mason-formula-box">
         <span class="mason-formula-text">T(s) = Σ(P<sub>k</sub>Δ<sub>k</sub>) / Δ</span>
@@ -41,7 +41,7 @@
 
     <div class="divider"></div>
 
-    <!-- ════ Transfer Function ════ -->
+    
     <div class="accordion-bar" [class.is-open]="open['tf']">
       <button class="acc-trigger" [attr.aria-expanded]="open['tf']" (click)="toggle('tf')">
         <span class="acc-trigger__left">
@@ -60,7 +60,7 @@
         <div class="acc-panel">
           <div class="acc-panel__inner">
 
-            <!-- Symbolic T(s) -->
+            
             <div class="tf-result-block">
               <div class="tf-result-label">Symbolic T(s)</div>
               <div class="tf-result-value">
@@ -72,7 +72,7 @@
               </div>
             </div>
 
-            <!-- Numeric T(s) — only shown when backend returns it -->
+            
             @if (results?.tfNumeric) {
               <div class="tf-result-block tf-result-block--numeric">
                 <div class="tf-result-label">Evaluated T(s)</div>
@@ -85,7 +85,7 @@
       }
     </div>
 
-    <!-- ════ Forward Paths ════ -->
+    
     <div class="accordion-bar" [class.is-open]="open['paths']">
       <button class="acc-trigger" [attr.aria-expanded]="open['paths']" (click)="toggle('paths')">
         <span class="acc-trigger__left">
@@ -125,7 +125,7 @@
       }
     </div>
 
-    <!-- ════ Individual Loops ════ -->
+    
     <div class="accordion-bar" [class.is-open]="open['loops']">
       <button class="acc-trigger" [attr.aria-expanded]="open['loops']" (click)="toggle('loops')">
         <span class="acc-trigger__left">
@@ -165,7 +165,7 @@
       }
     </div>
 
-    <!-- ════ Non-touching Loops ════ -->
+    
     <div class="accordion-bar" [class.is-open]="open['nonTouching']">
       <button class="acc-trigger" [attr.aria-expanded]="open['nonTouching']" (click)="toggle('nonTouching')">
         <span class="acc-trigger__left">
@@ -209,7 +209,7 @@
       }
     </div>
 
-    <!-- ════ Delta Values ════ -->
+    
     <div class="accordion-bar" [class.is-open]="open['delta']">
       <button class="acc-trigger" [attr.aria-expanded]="open['delta']" (click)="toggle('delta')">
         <span class="acc-trigger__left">
@@ -228,13 +228,13 @@
           <div class="acc-panel__inner">
             <div class="delta-grid">
 
-              <!-- Δ -->
+              
               <div class="delta-row">
                 <span class="delta-label">Δ =</span>
                 <span class="delta-value">{{ results?.delta ?? 'Not calculated' }}</span>
               </div>
 
-              <!-- Δk per forward path -->
+              
               @for (dk of results?.deltaK ?? []; track $index) {
                 <div class="delta-row">
                   <span class="delta-label">Δ{{ $index + 1 }} =</span>
@@ -248,5 +248,5 @@
       }
     </div>
 
-  </div><!-- /sidebar-body -->
+  </div>
 </aside>

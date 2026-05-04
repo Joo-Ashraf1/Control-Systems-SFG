@@ -1,4 +1,4 @@
-/* right-sidebar.component.css */
+
 :host {
   display: block;
   width: var(--right-sidebar-width);
@@ -61,7 +61,7 @@
   50%      { opacity: 0.4; transform: scale(0.7); }
 }
 
-/* Info Grid */
+
 .info-grid {
   background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
@@ -95,7 +95,7 @@
 }
 .info-value.nonzero { color: var(--accent-primary); }
 
-/* File buttons */
+
 .file-ops {
   display: flex;
   flex-direction: column;
@@ -134,7 +134,7 @@
 .file-btn__sub   { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
 .file-btn__arrow { color: var(--text-muted); transition: transform var(--transition), color var(--transition); flex-shrink: 0; }
 
-/* Parse banners */
+
 .parse-banner {
   border-radius: var(--radius-sm);
   padding: 8px 10px;
@@ -167,7 +167,7 @@
 }
 .parse-error-list li { line-height: 1.6; }
 
-/* Format hint */
+
 .format-hint {
   background: rgba(245,197,66,0.06);
   border: 1px solid rgba(245,197,66,0.18);
@@ -188,7 +188,7 @@
   line-height: 1.7; white-space: pre; overflow-x: auto;
 }
 
-/* Status */
+
 .status-indicator {
   display: flex; align-items: center; gap: 7px;
   padding: 8px 10px;

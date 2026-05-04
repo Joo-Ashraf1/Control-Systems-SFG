@@ -1,8 +1,6 @@
-/* ============================================
-   results-popup.component.css
-   ============================================ */
 
-/* ── Backdrop ── */
+
+
 .popup-backdrop {
   position: fixed;
   inset: 0;
@@ -23,7 +21,7 @@
   pointer-events: all;
 }
 
-/* ── Container ── */
+
 .popup-container {
   width: 900px;
   max-width: 96vw;
@@ -45,7 +43,7 @@
   transform: translateY(0) scale(1);
 }
 
-/* ── Header ── */
+
 .popup-header {
   display: flex;
   align-items: center;
@@ -112,7 +110,7 @@
   color: var(--accent-warn);
 }
 
-/* ── Body ── */
+
 .popup-body {
   display: flex;
   flex: 1;
@@ -136,7 +134,7 @@
 }
 
 .popup-col-divider {
-  display: none; /* handled by border-right on col */
+  display: none; 
 }
 
 .popup-col--results {
@@ -146,7 +144,7 @@
   gap: 12px;
 }
 
-/* ── Column Header ── */
+
 .col-header {
   margin-bottom: 4px;
   flex-shrink: 0;
@@ -169,7 +167,7 @@
   margin-top: 2px;
 }
 
-/* ── S-Domain Note ── */
+
 .sdomain-note {
   display: flex;
   align-items: flex-start;
@@ -195,7 +193,7 @@
   color: var(--accent-gold);
 }
 
-/* ── Gain Rows ── */
+
 .gain-rows {
   display: flex;
   flex-direction: column;
@@ -268,7 +266,7 @@
   padding: 16px 8px;
 }
 
-/* ── Frequency Block ── */
+
 .frequency-block {
   display: flex;
   align-items: center;
@@ -312,7 +310,7 @@
   white-space: nowrap;
 }
 
-/* ── Calculate Button ── */
+
 .calculate-main-btn {
   width: 100%;
   padding: 11px;
@@ -321,7 +319,7 @@
   flex-shrink: 0;
 }
 
-/* ── TF Hero ── */
+
 .tf-hero {
   display: flex;
   align-items: center;
@@ -365,7 +363,7 @@
   font-size: 12px;
 }
 
-/* ── Results Tabs ── */
+
 .results-tabs {
   display: flex;
   gap: 2px;
@@ -405,7 +403,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* ── Tab Content ── */
+
 .tab-content {
   flex: 1;
   overflow: hidden;
@@ -433,7 +431,7 @@
   padding-right: 4px;
 }
 
-/* ── Result Items ── */
+
 .result-card {
   background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
@@ -476,7 +474,7 @@
   line-height: 1.5;
 }
 
-/* ── Delta Breakdown ── */
+
 .delta-breakdown {
   display: flex;
   flex-direction: column;
@@ -511,7 +509,7 @@
   line-height: 1.5;
 }
 
-/* ── Popup Footer ── */
+
 .popup-footer {
   display: flex;
   align-items: center;
@@ -541,7 +539,7 @@
   gap: 8px;
 }
 
-/* ── Empty State ── */
+
 .empty-state {
   font-family: var(--font-mono);
   font-size: 11px;

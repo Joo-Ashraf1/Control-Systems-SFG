@@ -1,21 +1,19 @@
-/* ============================================
-   left-sidebar.component.css  — Accordion Edition
-   ============================================ */
+
 
 :host {
   display: block;
   width: var(--sidebar-width, 260px);
   height: 100%;
-  /* CRITICAL: contain height so it never pushes footer */
+  
   overflow: hidden;
 }
 
-/* ── Shell ── */
+
 .left-sidebar {
   display: flex;
   flex-direction: column;
   width: 100%;
-  /* FIXED: use 100% of host height, never grow beyond it */
+  
   height: 100%;
   max-height: 100%;
   background: var(--bg-surface);
@@ -24,14 +22,14 @@
   box-shadow: 2px 0 8px rgba(0,0,0,0.05);
 }
 
-/* ── Header ── */
+
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 14px 14px 12px;
   border-bottom: 1px solid var(--border-subtle);
-  /* FIXED: never shrink, always fixed height */
+  
   flex-shrink: 0;
 }
 
@@ -71,9 +69,9 @@
   padding: 2px 6px;
 }
 
-/* ── Scrollable Body ── */
+
 .sidebar-body {
-  /* FIXED: flex:1 with min-height:0 allows proper scroll containment */
+  
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -82,7 +80,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  /* thin scrollbar */
+  
   scrollbar-width: thin;
   scrollbar-color: var(--border-normal) transparent;
 }
@@ -97,10 +95,10 @@
   background: var(--accent-primary);
 }
 
-/* ── First section (mason + calculate) ── */
+
 .sidebar-section { padding: 2px 0; }
 
-/* ── Mason Formula Box ── */
+
 .mason-formula-box {
   background: var(--bg-elevated);
   border: 1px solid var(--border-strong);
@@ -124,7 +122,7 @@
   color: var(--accent-primary);
 }
 
-/* ── Calculate Button ── */
+
 .btn--full { width: 100%; }
 
 .calculate-btn {
@@ -149,7 +147,7 @@
   pointer-events: none;
 }
 
-/* ── Divider ── */
+
 .divider {
   width: 100%;
   height: 1px;
@@ -158,9 +156,7 @@
   flex-shrink: 0;
 }
 
-/* ══════════════════════════════════════════
-   ACCORDION BARS
-   ══════════════════════════════════════════ */
+
 
 .accordion-bar {
   border: 1px solid var(--border-subtle);
@@ -169,7 +165,7 @@
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   background: var(--bg-surface);
-  /* FIXED: prevent accordion from stretching beyond its content */
+  
   flex-shrink: 0;
 }
 
@@ -183,7 +179,7 @@
   0 2px 8px rgba(0,0,0,0.08);
 }
 
-/* ── Trigger (the bar header you click) ── */
+
 .acc-trigger {
   width: 100%;
   display: flex;
@@ -222,7 +218,7 @@
   flex-shrink: 0;
 }
 
-/* ── Icon inside trigger ── */
+
 .acc-icon {
   display: inline-flex;
   align-items: center;
@@ -242,7 +238,7 @@
 .acc-icon--tf   { background: rgba(99, 220, 255, 0.10); border-color: rgba(99,220,255,0.25); color: var(--accent-secondary, #63dcff); }
 .acc-icon--delta{ background: rgba(245, 197, 66, 0.10); border-color: rgba(245,197,66,0.25); color: var(--accent-gold, #f5c542); }
 
-/* ── Label ── */
+
 .acc-label {
   font-family: var(--font-display);
   font-size: 11px;
@@ -257,7 +253,7 @@
 
 .is-open .acc-label { color: var(--accent-primary); }
 
-/* ── Badge (count) ── */
+
 .acc-badge {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -271,7 +267,7 @@
   line-height: 1.7;
 }
 
-/* Status text (for TF bar) */
+
 .acc-status {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -282,7 +278,7 @@
   white-space: nowrap;
 }
 
-/* ── Chevron rotation ── */
+
 .acc-chevron {
   transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-muted);
@@ -291,7 +287,7 @@
 
 .is-open .acc-chevron { transform: rotate(180deg); color: var(--accent-primary); }
 
-/* ── Collapsible panel ── */
+
 .acc-panel {
   display: grid;
   grid-template-rows: 0fr;
@@ -308,7 +304,7 @@
 
 .is-open .acc-panel__inner { padding: 10px; }
 
-/* ── Result cards inside panels ── */
+
 .result-cards {
   display: flex;
   flex-direction: column;
@@ -359,7 +355,7 @@
   word-break: break-all;
 }
 
-/* ── Delta grid ── */
+
 .delta-grid {
   display: flex;
   flex-direction: column;
@@ -395,7 +391,7 @@
 
 .delta-value.calculated { color: var(--text-primary); }
 
-/* ── Transfer Function panel internals ── */
+
 .tf-result-block {
   background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
@@ -435,7 +431,7 @@
   font-style: italic;
 }
 
-/* ── Empty State ── */
+
 .empty-state {
   font-size: 11px;
   color: var(--text-muted);

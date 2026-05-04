@@ -18,9 +18,9 @@ def post(client, payload):
     return client.post("/calculate", json=payload)
 
 
-# ─────────────────────────────────────────────
-# Happy Path Tests
-# ─────────────────────────────────────────────
+
+
+
 
 def test_single_forward_path_no_loops(client):
     payload = {
@@ -39,7 +39,7 @@ def test_single_forward_path_no_loops(client):
     assert len(data["forwardPaths"]) == 1
     assert data["loops"] == []
     assert data["delta"] == "1"
-    # delta = 1, delta_k = 1, tf = a*b
+    
     assert data["tfSymbolic"] == "a*b"
 
 
@@ -110,9 +110,9 @@ def test_non_touching_loops(client):
     assert data["nonTouchingLoops"][0]["size"] == 2
 
 
-# ─────────────────────────────────────────────
-# Edge Case Tests
-# ─────────────────────────────────────────────
+
+
+
 
 def test_no_forward_path(client):
     payload = {

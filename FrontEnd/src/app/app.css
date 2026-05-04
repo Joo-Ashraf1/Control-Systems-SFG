@@ -11,14 +11,12 @@
   grid-template-columns: var(--sidebar-width) 1fr var(--right-sidebar-width);
   grid-template-rows: 1fr;
   width: 100%;
-  /* FIXED: strict height so nothing overflows */
   height: 100vh;
   max-height: 100vh;
   overflow: hidden;
   background: var(--bg-base);
 }
 
-/* FIXED: left bar must never grow beyond screen height */
 app-left-bar {
   height: 100%;
   max-height: 100vh;
@@ -31,12 +29,10 @@ app-rightbar {
   overflow: hidden;
 }
 
-/* Main column: canvas + footer stacked */
 .app-main {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  /* FIXED: strict height so footer is always visible */
   height: 100vh;
   max-height: 100vh;
   overflow: hidden;
@@ -44,21 +40,20 @@ app-rightbar {
 }
 
 app-canvas {
-  /* FIXED: flex:1 + min-height:0 allows canvas to shrink and give space to footer */
   flex: 1;
   min-height: 0;
   overflow: hidden;
 }
 
 app-footer {
-  /* FIXED: footer never shrinks or disappears */
+  
   flex-shrink: 0;
 }
 
-/* ── Graph Warnings Toast (positioned inside .app-main, top-left of canvas) ── */
+
 .dynamic-errors-window {
   position: absolute;
-  top: 52px;  /* below canvas topbar */
+  top: 52px;  
   left: 12px;
   width: 260px;
   max-width: calc(100% - 24px);
@@ -144,7 +139,7 @@ app-footer {
   color: var(--accent-warn);
 }
 
-/* ── Large Calculation Error Modal ── */
+
 .error-modal-backdrop {
   position: fixed;
   inset: 0;
