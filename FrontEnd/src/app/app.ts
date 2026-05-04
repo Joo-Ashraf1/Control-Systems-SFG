@@ -26,7 +26,7 @@ export class App {
   graph: ParsedGraph = { nodes: [], edges: [], inputNode: '', outputNode: '' };
   result: Results | null = null;
   selectedItem: any = null;
-  
+
   currentErrors: string[] = [];
   showErrorModal = false;
 
